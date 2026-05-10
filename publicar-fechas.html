@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario de Evaluaciones | Maestro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #f1f5f9;
+            --accent-exam: #ef4444;
+            --accent-project: #8b5cf6;
+        }
+
+        body.dark-mode {
+            --bg: #0f172a;
+            --text: #f1f5f9;
+            --card: #1e293b;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .container { max-width: 700px; margin: 0 auto; }
+
+        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+        
+        .btn-back {
+            background: var(--card); border: none; padding: 10px; border-radius: 12px;
+            cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); color: var(--primary);
+        }
+
+        .glass-card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: var(--bg);
+            padding: 5px;
+            border-radius: 15px;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: transparent;
+            color: #64748b;
+        }
+
+        .type-btn.active[data-type="examen"] { background: var(--accent-exam); color: white; }
+        .type-btn.active[data-type="proyecto"] { background: var(--accent-project); color: white; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+
+        label { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; }
+
+        input, select, textarea {
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-family: inherit;
+            outline: none;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <button class="btn-back" onclick="window.location.href='inicio.html'">
+                <i data-lucide="chevron-left"></i>
+            </button>
+            <h1 style="font-size: 18px; margin:0;">Programar Evaluación</h1>
+        </div>
+
+        <div class="glass-card">
+            <div class="type-selector">
+                <button class="type-btn active" data-type="examen" onclick="setType('examen')">
+                    <i data-lucide="clipboard-list"></i> Examen
+                </button>
+                <button class="type-btn" data-type="proyecto" onclick="setType('proyecto')">
+                    <i data-lucide="folder-kanban"></i> Proyecto
+                </button>
+            </div>
+
+            <form id="evalForm">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Grado</label>
+                        <select id="grado">
+                            <option value="1">1°</option>
+                            <option value="2">2°</option>
+                            <option value="3">3°</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Grupo</label>
+                        <select id="grupo">
+                            <option value="A">A</option><option value="B">B</option>
+                            <option value="C">C</option><option value="D">D</option>
+                            <option value="E">E</option><option value="F">F</option>
+                            <option value="G">G</option><option value="H">H</option>
+                            <option value="I">I</option><option value="J">J</option>
+                            <option value="K">K</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>Materia</label>
+                        <input type="text" id="materia" placeholder="Ej. Historia Universal" required>
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label id="label-titulo">Temario del Examen</label>
+                        <textarea id="descripcion" rows="3" placeholder="Puntos a evaluar..."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label id="label-fecha">Fecha del Examen</label>
+                        <input type="date" id="fecha" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Valor (%)</label>
+                        <input type="number" id="valor" placeholder="Ej. 40" min="1" max="100">
+                    </div>
+                </div>
+
+                <button type="button" class="btn-submit" id="btn-save" onclick="guardarEvaluacion()">
+                    <i data-lucide="calendar-plus"></i> Agendar Evaluación
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-trG4y0yS3ldkZwcOY0Ar-s_aCt1VE-8",
+            authDomain: "escuelasecundariageneralno2.firebaseapp.com",
+            projectId: "escuelasecundariageneralno2",
+            storageBucket: "escuelasecundariageneralno2.firebasestorage.app",
+            messagingSenderId: "755206365423",
+            appId: "1:755206365423:web:81f6a2335a5ce8bfce3b1a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        lucide.createIcons();
+
+        let currentType = 'examen';
+
+        window.setType = (type) => {
+            currentType = type;
+            document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+
+            const labelTitulo = document.getElementById('label-titulo');
+            const labelFecha = document.getElementById('label-fecha');
+            const btnSubmit = document.getElementById('btn-save');
+
+            if(type === 'examen') {
+                labelTitulo.innerText = "Temario del Examen";
+                labelFecha.innerText = "Fecha del Examen";
+                btnSubmit.style.background = "var(--primary)";
+            } else {
+                labelTitulo.innerText = "Requisitos del Proyecto";
+                labelFecha.innerText = "Fecha Límite de Entrega";
+                btnSubmit.style.background = "var(--accent-project)";
+            }
+        };
+
+        window.guardarEvaluacion = async () => {
+            const btn = document.getElementById('btn-save');
+            const materia = document.getElementById('materia').value;
+            const fecha = document.getElementById('fecha').value;
+            const grado = document.getElementById('grado').value;
+            const grupo = document.getElementById('grupo').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const valor = document.getElementById('valor').value;
+
+            if(!materia || !fecha) {
+                return Swal.fire('Incompleto', 'Debes indicar materia y fecha.', 'warning');
+            }
+
+            const { isConfirmed } = await Swal.fire({
+                title: 'Confirmar registro',
+                text: `Se publicará el ${currentType} de ${materia}.`,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+                confirmButtonColor: currentType === 'examen' ? '#ef4444' : '#8b5cf6'
+            });
+
+            if (!isConfirmed) return;
+
+            btn.disabled = true;
+            Swal.fire({ title: 'Agendando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                await addDoc(collection(db, "evaluaciones"), {
+                    tipo: currentType,
+                    materia,
+                    fecha,
+                    grado,
+                    grupo,
+                    descripcion,
+                    valor: valor || "N/A",
+                    maestro: localStorage.getItem('nombre') || 'Docente',
+                    timestamp: serverTimestamp()
+                });
+
+                Swal.fire('¡Agendado!', `El ${currentType} ha sido publicado.`, 'success');
+                document.getElementById('evalForm').reset();
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Error', 'No se pudo agendar la evaluación.', 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        };
+
+        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+    </script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Contacto | Moisés Sáenz #2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text: #1e293b;
+            --facebook: #1877F2;
+            --messenger: #0084FF;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: linear-gradient(-45deg, #004aad, #00c6ff, #0072ff, #00c6ff);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .header-app {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; max-width: 480px; color: white; margin-bottom: 20px;
+        }
+
+        .btn-back { background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px; border-radius: 50%; cursor: pointer; }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 25px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        .contact-icon {
+            width: 60px; height: 60px; background: white; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px; color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0,74,173,0.1);
+        }
+
+        h2 { color: var(--primary); font-weight: 800; margin: 0; font-size: 22px; }
+        .subtitle { color: #64748b; font-size: 13px; margin-bottom: 25px; }
+
+        .info-row {
+            display: flex; align-items: center; gap: 15px;
+            text-align: left; padding: 15px; background: rgba(255,255,255,0.5);
+            border-radius: 20px; margin-bottom: 12px; transition: 0.3s;
+            cursor: pointer; text-decoration: none; color: inherit;
+        }
+
+        .info-row:active { transform: scale(0.97); background: white; }
+
+        .info-row i { color: var(--primary); }
+        .info-content p { margin: 0; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
+        .info-content span { font-size: 14px; font-weight: 600; color: var(--text); }
+
+        .social-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;
+        }
+
+        .btn-social {
+            padding: 15px; border-radius: 18px; border: none;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-weight: 700; font-size: 13px; cursor: pointer; text-decoration: none;
+            color: white; transition: 0.3s;
+        }
+
+        .facebook { background: var(--facebook); }
+        .messenger { background: var(--messenger); }
+        .btn-social:active { transform: scale(0.95); opacity: 0.9; }
+
+        /* Mapa estático simulado */
+        .map-preview {
+            width: 100%; height: 120px; background: #e2e8f0; border-radius: 20px;
+            margin-top: 15px; display: flex; align-items: center; justify-content: center;
+            flex-direction: column; color: #64748b; font-size: 12px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        :root {
+    --primary: #004aad;
+    --text: #1e293b;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #f1f5f9;
+}
+
+/* Colores cuando el modo oscuro está activo */
+body.dark-mode {
+    --bg: #0f172a;
+    --text: #f1f5f9;
+    --card: #1e293b;
+    --border: #334155;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
+}
+    </style>
+</head>
+<body>
+
+    <div class="header-app">
+        <button class="btn-back" onclick="window.location.href='inicio.html'">
+            <i data-lucide="arrow-left"></i>
+        </button>
+        <h1 style="font-size: 18px; font-weight: 800; margin: 0;">Contacto</h1>
+        <div style="width:40px;"></div>
+    </div>
+
+    <div class="glass-card">
+        <div class="contact-icon">
+            <i data-lucide="map-pin" style="width: 32px; height: 32px;"></i>
+        </div>
+        <h2>Moisés Sáenz </h2>
+        <p class="subtitle">Escuela Secundaria General #2</p>
+
+        <a class="info-row" href="https://maps.app.goo.gl/XMUuUD4SPKBi1g626" target="_blank">
+            <i data-lucide="map"></i>
+            <div class="info-content">
+                <p>Dirección</p>
+                <span>Calle Cuauhtémoc s/n, Esq. Benito Juárez, 85060.</span>
+            </div>
+        </a>
+
+        <div class="info-row">
+            <i data-lucide="clock"></i>
+            <div class="info-content">
+                <p>Atención</p>
+                <span>Lunes a Viernes: 7:00 AM - 7:30 PM</span>
+            </div>
+        </div>
+
+        <div class="social-grid">
+            <a href="https://www.facebook.com/general2obregon" target="_blank" class="btn-social facebook">
+                <i data-lucide="facebook"></i>
+                Facebook
+            </a>
+            <a href="https://www.m.me/general2obregón" target="_blank" class="btn-social messenger">
+                <i data-lucide="message-circle"></i>
+                Messenger
+            </a>
+        </div>
+
+        <div class="map-preview" onclick="window.open('https://www.google.com/maps/search/?api=1&query=Secundaria+General+2+Cajeme', '_blank')">
+            <i data-lucide="navigation" style="margin-bottom: 5px;"></i>
+            <b>Toca para ver ubicación exacta</b>
+            <span>Ciudad Obregón, Sonora</span>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        // Función para aplicar el tema guardado al cargar la página
+function aplicarTemaGuardado() {
+    const temaRecuperado = localStorage.getItem('theme');
+    if (temaRecuperado === 'dark') {
+        document.body.classList.add('dark-mode');
+        // Si estás en la página de ajustes, asegúrate de que el switch se vea marcado
+        const toggle = document.getElementById('dark-mode-toggle');
+        if (toggle) toggle.checked = true;
+    }
+}
+
+// Ejecutar automáticamente al abrir cualquier página
+aplicarTemaGuardado();
+    </script>
+</body>
+</html>

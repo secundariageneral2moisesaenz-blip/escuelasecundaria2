@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portal Moisés Sáenz #2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --secondary: #00c6ff;
+            --glass: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text: #1e293b;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0; display: flex; justify-content: center; align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #004aad, #00c6ff, #0072ff, #00c6ff);
+            background-size: 400% 400%; animation: gradient 15s ease infinite; padding: 20px;
+        }
+
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .glass-card {
+            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 28px;
+            padding: 35px 25px; width: 100%; max-width: 420px; text-align: center;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.15);
+            transition: all 0.5s ease;
+        }
+
+        .logo-escuela { width: 90px; margin-bottom: 10px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+        h2 { color: var(--primary); font-weight: 800; margin: 0; font-size: 24px; }
+        p { color: #475569; font-size: 14px; margin-bottom: 25px; }
+
+        .input-group { margin-bottom: 12px; text-align: left; }
+        
+        input, select {
+            width: 100%; padding: 15px; border-radius: 14px; border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.5); font-size: 16px; outline: none; transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(0, 74, 173, 0.1); }
+
+        .btn-primary {
+            width: 100%; padding: 16px; background: var(--primary); color: white;
+            border: none; border-radius: 14px; font-weight: 700; font-size: 16px;
+            cursor: pointer; transition: 0.3s; margin-top: 10px;
+        }
+
+        .btn-primary:active { transform: scale(0.96); }
+
+        .links-container { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .link-item { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 700; cursor: pointer; }
+        .divider { height: 1px; background: rgba(0,0,0,0.08); margin: 15px 0; }
+        
+        .hidden { display: none; }
+
+        .swal2-popup { border-radius: 20px !important; font-family: 'Plus Jakarta Sans', sans-serif !important; }
+
+        /* Estilo para imágenes del tutorial */
+        .img-tutorial {
+            width: 100%;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-card" id="main-card">
+        <img src="ESCGM2.jpg" alt="Logo" class="logo-escuela">
+        <h2 id="form-title">Portal Escolar</h2>
+        <p id="form-desc">Secundaria General No. #2 Moisés Saénz</p>
+        
+        <form id="authForm">
+            <div id="reg-fields" class="hidden">
+                <div class="input-group">
+                    <select id="user-role">
+                        <option value="alumno">Soy Alumno</option>
+                        <option value="maestro">Soy Maestro</option>
+                        <option value="padre">Soy Padre de Familia</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="fullname" placeholder="Nombre completo">
+                </div>
+                <div id="alumno-fields">
+                    <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                        <select id="grado">
+                            <option value="">Grado</option>
+                            <option value="1">1°</option>
+                            <option value="2">2°</option>
+                            <option value="3">3°</option>
+                        </select>
+                        <input type="text" id="grupo" placeholder="Grupo" maxlength="1" style="text-transform: uppercase;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <input type="email" id="email" placeholder="Correo electrónico" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Contraseña" required>
+            </div>
+            
+            <button type="submit" id="main-btn" class="btn-primary">Iniciar Sesión</button>
+        </form>
+
+        <div class="links-container">
+            <span class="link-item" id="btn-show-forgot">¿Olvidaste tu contraseña?</span>
+            <div class="divider"></div>
+            <span class="link-item" id="btn-toggle">¿No tienes cuenta? Regístrate aquí</span>
+        </div>
+    </div>
+
+    <div class="glass-card hidden" id="forgot-card">
+        <h2>Recuperar</h2>
+        <p>Enviaremos un enlace a tu correo para restablecer tu acceso.</p>
+        <div class="input-group">
+            <input type="email" id="recover-email" placeholder="Correo de recuperación">
+        </div>
+        <button class="btn-primary" id="btn-send-recover">Enviar Enlace</button>
+        <div class="links-container">
+            <span class="link-item" id="btn-back-login">Volver al inicio</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-trG4y0yS3ldkZwcOY0Ar-s_aCt1VE-8",
+            authDomain: "escuelasecundariageneralno2.firebaseapp.com",
+            projectId: "escuelasecundariageneralno2",
+            storageBucket: "escuelasecundariageneralno2.firebasestorage.app",
+            messagingSenderId: "755206365423",
+            appId: "1:755206365423:web:81f6a2335a5ce8bfce3b1a",
+            measurementId: "G-CSGN1Z9MM0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- SALTAR LOGIN SI YA HAY SESIÓN ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = "inicio.html";
+            }
+        });
+
+        let isLogin = true;
+
+        const mainCard = document.getElementById('main-card');
+        const forgotCard = document.getElementById('forgot-card');
+
+        document.getElementById('btn-toggle').addEventListener('click', () => {
+            isLogin = !isLogin;
+            document.getElementById('form-title').innerText = isLogin ? "Portal Escolar" : "Crear Cuenta";
+            document.getElementById('main-btn').innerText = isLogin ? "Iniciar Sesión" : "Finalizar Registro";
+            document.getElementById('btn-toggle').innerText = isLogin ? "¿No tienes cuenta? Regístrate aquí" : "Ya tengo cuenta. Entrar";
+            document.getElementById('reg-fields').classList.toggle('hidden', isLogin);
+            document.getElementById('btn-show-forgot').classList.toggle('hidden', !isLogin);
+        });
+
+        document.getElementById('user-role').addEventListener('change', (e) => {
+            document.getElementById('alumno-fields').classList.toggle('hidden', e.target.value !== 'alumno');
+        });
+
+        document.getElementById('btn-show-forgot').addEventListener('click', () => {
+            mainCard.classList.add('hidden');
+            forgotCard.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-back-login').addEventListener('click', () => {
+            forgotCard.classList.add('hidden');
+            mainCard.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-send-recover').addEventListener('click', async () => {
+            const email = document.getElementById('recover-email').value;
+            if(!email) return Swal.fire('Atención', 'Ingresa tu correo institucional', 'warning');
+            try {
+                await sendPasswordResetEmail(auth, email);
+                Swal.fire('¡Enviado!', 'Revisa tu bandeja de entrada o spam.', 'success');
+                document.getElementById('btn-back-login').click();
+            } catch (e) {
+                Swal.fire('Error', 'No pudimos encontrar ese correo.', 'error');
+            }
+        });
+
+        // --- FUNCIÓN DEL TUTORIAL CON TUS IMÁGENES ---
+        async function mostrarTutorial(rol, nombre) {
+            const primerNombre = nombre.split(' ')[0];
+            const swalConfig = {
+                confirmButtonColor: '#004aad',
+                confirmButtonText: 'Siguiente',
+                padding: '2em',
+                color: '#1e293b',
+                backdrop: `rgba(0, 74, 173, 0.4)`,
+                allowOutsideClick: false
+            };
+
+            // PASO 1: BIENVENIDA
+            await Swal.fire({
+                ...swalConfig,
+                title: `¡Hola, ${primerNombre}! 👋`,
+                html: `
+                    <img src="TU_IMAGEN_BIENVENIDA.jpg" class="img-tutorial">
+                    <p>Bienvenido al <b>Portal Digital</b> de tu escuela. Estamos aquí para ayudarte en tu camino escolar.</p>
+                `
+            });
+
+            // PASO 2: HERRAMIENTAS
+            await Swal.fire({
+                ...swalConfig,
+                title: 'Tus Herramientas',
+                html: `
+                    <img src="TU_IMAGEN_HERRAMIENTAS.jpg" class="img-tutorial">
+                    <p>Aquí podrás revisar tus tareas, consultar avisos importantes y estar al tanto de tus evaluaciones.</p>
+                `
+            });
+
+            // PASO 3: PERFIL Y AJUSTES
+            await Swal.fire({
+                ...swalConfig,
+                title: 'Personalización',
+                html: `
+                    <img src="TU_IMAGEN_AJUSTES.jpg" class="img-tutorial">
+                    <p>Recuerda que en la barra inferior puedes acceder a tu perfil y cambiar al <b>Modo Oscuro</b> para cuidar tu vista.</p>
+                `
+            });
+
+            // PASO 4: FINALIZAR
+            await Swal.fire({
+                ...swalConfig,
+                title: '¡Todo listo! 🚀',
+                text: 'Ya puedes empezar a explorar tu portal escolar.',
+                icon: 'success',
+                confirmButtonText: '¡Entrar al Portal!'
+            });
+        }
+
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const pass = document.getElementById('password').value;
+
+            if(email === "secundariageneral2moisesaenz@gmail.com" && pass === "secundariageneral120") {
+                localStorage.setItem('role', 'admin');
+                Swal.fire({ title: 'Acceso Admin', text: 'Bienvenido a la consola de dirección.', icon: 'success', timer: 1500, showConfirmButton: false });
+                setTimeout(() => window.location.href = "inicio.html", 1500);
+                return;
+            }
+
+            try {
+                if (isLogin) {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+                    const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+                    if (userDoc.exists()) {
+                        localStorage.setItem('role', userDoc.data().rol);
+                        window.location.href = "inicio.html";
+                    }
+                } else {
+                    const role = document.getElementById('user-role').value;
+                    const name = document.getElementById('fullname').value;
+                    if(!name) return Swal.fire('Error', 'Escribe tu nombre completo', 'error');
+
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                    const user = userCredential.user;
+
+                    const userData = {
+                        nombre: name,
+                        email: email,
+                        rol: role,
+                        createdAt: new Date()
+                    };
+
+                    if(role === 'alumno') {
+                        userData.grado = document.getElementById('grado').value;
+                        userData.grupo = document.getElementById('grupo').value.toUpperCase();
+                    }
+
+                    await setDoc(doc(db, "users", user.uid), userData);
+                    localStorage.setItem('role', role);
+
+                    // Solo mostramos el tutorial en el registro
+                    await mostrarTutorial(role, name);
+                    window.location.href = "inicio.html";
+                }
+            } catch (error) {
+                Swal.fire('Error de acceso', 'Verifica que tu correo y contraseña sean correctos.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

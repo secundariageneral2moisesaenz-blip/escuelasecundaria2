@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Exámenes y Proyectos | Moisés Sáenz #2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --exam-color: #ef4444; /* Rojo para exámenes */
+            --project-color: #8b5cf6; /* Morado para proyectos */
+            --glass: rgba(255, 255, 255, 0.9);
+            --text: #1e293b;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .header-app {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; max-width: 500px; margin: 0 auto 20px;
+        }
+
+        .btn-back { background: rgba(255,255,255,0.1); border: none; color: white; padding: 10px; border-radius: 50%; cursor: pointer; }
+
+        .container { max-width: 500px; margin: 0 auto; }
+
+        .eval-card {
+            background: var(--glass);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 15px;
+            color: var(--text);
+            position: relative;
+            border-left: 8px solid #ddd;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .type-examen { border-left-color: var(--exam-color); }
+        .type-proyecto { border-left-color: var(--project-color); }
+
+        .badge {
+            font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 10px; text-transform: uppercase;
+        }
+        .badge-examen { background: #fee2e2; color: var(--exam-color); }
+        .badge-proyecto { background: #ede9fe; color: var(--project-color); }
+
+        .materia-name { font-size: 12px; font-weight: 700; color: #64748b; margin-top: 10px; display: block; }
+        h3 { margin: 5px 0; font-size: 18px; font-weight: 800; color: var(--primary); }
+        
+        .info-row { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-top: 10px; color: #475569; font-weight: 600; }
+        .info-row i { width: 16px; color: var(--primary); }
+
+        .empty-state { text-align: center; padding: 60px 20px; opacity: 0.7; }
+        
+        :root {
+            --primary: #004aad;
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #f1f5f9;
+        }
+
+        body.dark-mode {
+            --bg: #0f172a;
+            --text: #f1f5f9;
+            --card: #1e293b;
+            --border: #334155;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            transition: background 0.3s, color 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-app">
+        <button class="btn-back" onclick="window.location.href='inicio.html'">
+            <i data-lucide="arrow-left"></i>
+        </button>
+        <h1 style="font-size: 18px; font-weight: 800; margin: 0;">Calendario de Evaluación</h1>
+        <div style="width:40px;"></div>
+    </div>
+
+    <div class="container">
+        <p id="info-estudiante" style="text-align: center; font-size: 13px; margin-bottom: 20px; opacity: 0.8;">Cargando información...</p>
+        
+        <div id="lista-evaluaciones">
+            <div class="empty-state">Buscando fechas importantes...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, onSnapshot, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-trG4y0yS3ldkZwcOY0Ar-s_aCt1VE-8",
+            authDomain: "escuelasecundariageneralno2.firebaseapp.com",
+            projectId: "escuelasecundariageneralno2",
+            storageBucket: "escuelasecundariageneralno2.firebasestorage.app",
+            messagingSenderId: "755206365423",
+            appId: "1:755206365423:web:81f6a2335a5ce8bfce3b1a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        lucide.createIcons();
+
+        const listaContainer = document.getElementById('lista-evaluaciones');
+        const infoEstudiante = document.getElementById('info-estudiante');
+
+        // Escuchar el estado de la sesión para obtener el grupo real de la BD
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        const grado = userData.grado;
+                        const grupo = userData.grupo;
+
+                        infoEstudiante.innerText = `Mostrando evaluaciones para: ${grado}° "${grupo}"`;
+                        
+                        // Llamar a la función de carga con los datos reales
+                        cargarEvaluaciones(grado, grupo);
+                    } else {
+                        infoEstudiante.innerText = "No se encontraron datos de registro.";
+                    }
+                } catch (e) {
+                    console.error("Error al obtener perfil:", e);
+                }
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        function cargarEvaluaciones(grado, grupo) {
+            const q = query(
+                collection(db, "evaluaciones"),
+                where("grado", "==", grado),
+                where("grupo", "==", grupo.toUpperCase()),
+                orderBy("fecha", "asc")
+            );
+
+            onSnapshot(q, (snapshot) => {
+                listaContainer.innerHTML = '';
+
+                if (snapshot.empty) {
+                    listaContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i data-lucide="calendar-check" style="width:48px; height:48px; margin-bottom:10px;"></i>
+                            <p>No hay exámenes ni proyectos programados para tu grupo en este momento.</p>
+                        </div>`;
+                    lucide.createIcons();
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const evalData = doc.data();
+                    const esExamen = evalData.tipo === 'Examen';
+                    const card = document.createElement('div');
+                    card.className = `eval-card ${esExamen ? 'type-examen' : 'type-proyecto'}`;
+                    
+                    card.innerHTML = `
+                        <span class="badge ${esExamen ? 'badge-examen' : 'badge-proyecto'}">
+                            ${evalData.tipo}
+                        </span>
+                        <span class="materia-name">${evalData.materia}</span>
+                        <h3>${evalData.titulo}</h3>
+                        
+                        <div class="info-row">
+                            <i data-lucide="calendar"></i>
+                            <span>Fecha: ${evalData.fecha}</span>
+                        </div>
+                        <div class="info-row">
+                            <i data-lucide="clock"></i>
+                            <span>Hora/Detalle: ${evalData.hora || 'Horario de clase'}</span>
+                        </div>
+                        <p style="font-size: 13px; color: #64748b; margin-top: 10px;">
+                            ${evalData.temas || ''}
+                        </p>
+                    `;
+                    listaContainer.appendChild(card);
+                });
+                lucide.createIcons();
+            });
+        }
+
+        function aplicarTemaGuardado() {
+            const temaRecuperado = localStorage.getItem('theme');
+            if (temaRecuperado === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        }
+
+        aplicarTemaGuardado();
+    </script>
+</body>
+</html>

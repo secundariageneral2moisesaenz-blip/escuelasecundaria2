@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Tareas | Maestro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #f1f5f9;
+        }
+
+        body.dark-mode {
+            --bg: #0f172a;
+            --text: #f1f5f9;
+            --card: #1e293b;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .container { max-width: 700px; margin: 0 auto; }
+
+        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+        .btn-back {
+            background: var(--card); border: none; padding: 10px; border-radius: 12px;
+            cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); color: var(--primary);
+        }
+
+        .glass-card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        h2 { margin-top: 0; color: var(--primary); font-weight: 800; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .full-width { grid-column: span 2; }
+
+        label { font-size: 13px; font-weight: 700; color: #64748b; }
+        
+        input, select, textarea {
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-family: inherit;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.1);
+        }
+
+        .file-upload {
+            border: 2px dashed #cbd5e1;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .file-upload:hover { border-color: var(--primary); background: rgba(0, 74, 173, 0.05); }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <button class="btn-back" onclick="window.location.href='inicio.html'">
+                <i data-lucide="chevron-left"></i>
+            </button>
+            <h1 style="font-size: 20px; margin:0;">Panel de Carga</h1>
+        </div>
+
+        <div class="glass-card">
+            <h2>Asignar Nueva Tarea</h2>
+            <form id="taskForm">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Grado</label>
+                        <select id="grado" required>
+                            <option value="1">1° Secundaria</option>
+                            <option value="2">2° Secundaria</option>
+                            <option value="3">3° Secundaria</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Grupo</label>
+                        <select id="grupo" required>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                            <option value="G">G</option>
+                            <option value="H">H</option>
+                            <option value="I">I</option>
+                            <option value="J">J</option>
+                            <option value="K">K</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>Materia</label>
+                        <input type="text" id="materia" placeholder="Ej. Matemáticas, Español..." required>
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>Título de la Tarea</label>
+                        <input type="text" id="titulo" placeholder="Nombre de la actividad" required>
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>Descripción / Instrucciones</label>
+                        <textarea id="descripcion" rows="4" placeholder="Detalla los pasos a seguir..."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Fecha de Entrega</label>
+                        <input type="date" id="fecha_entrega" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Archivo Adjunto (Opcional)</label>
+                        <div class="file-upload" onclick="document.getElementById('file-input').click()">
+                            <i data-lucide="upload-cloud" size="20"></i>
+                            <span id="file-name" style="font-size: 12px; display: block; margin-top: 5px;">Click para subir PDF o Imagen</span>
+                            <input type="file" id="file-input" style="display: none;" onchange="updateFileName(this)">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-submit" id="btn-publish" onclick="publicarTarea()">
+                    <i data-lucide="send"></i> Publicar para el Grupo
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        // Importación de Firebase para que la subida sea real
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-trG4y0yS3ldkZwcOY0Ar-s_aCt1VE-8",
+            authDomain: "escuelasecundariageneralno2.firebaseapp.com",
+            projectId: "escuelasecundariageneralno2",
+            storageBucket: "escuelasecundariageneralno2.firebasestorage.app",
+            messagingSenderId: "755206365423",
+            appId: "1:755206365423:web:81f6a2335a5ce8bfce3b1a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        lucide.createIcons();
+
+        // Actualizar nombre del archivo
+        window.updateFileName = (input) => {
+            const fileName = input.files[0] ? input.files[0].name : "Click para subir PDF o Imagen";
+            document.getElementById('file-name').innerText = fileName;
+        };
+
+        // Función Real de Publicación
+        window.publicarTarea = async () => {
+            const btn = document.getElementById('btn-publish');
+            const materia = document.getElementById('materia').value;
+            const titulo = document.getElementById('titulo').value;
+            const grado = document.getElementById('grado').value;
+            const grupo = document.getElementById('grupo').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const fecha_entrega = document.getElementById('fecha_entrega').value;
+            const fileInput = document.getElementById('file-input');
+
+            if(!materia || !titulo || !fecha_entrega) {
+                return Swal.fire('Error', 'Completa los campos obligatorios.', 'error');
+            }
+
+            const { isConfirmed } = await Swal.fire({
+                title: '¿Publicar tarea?',
+                text: `Se enviará a ${grado}° ${grupo}`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#004aad',
+                confirmButtonText: 'Sí, publicar'
+            });
+
+            if (!isConfirmed) return;
+
+            btn.disabled = true;
+            Swal.fire({ title: 'Subiendo tarea...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                let fileUrl = "";
+                if (fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const storageRef = ref(storage, `tareas/${Date.now()}_${file.name}`);
+                    await uploadBytes(storageRef, file);
+                    fileUrl = await getDownloadURL(storageRef);
+                }
+
+                await addDoc(collection(db, "tareas"), {
+                    materia,
+                    titulo,
+                    grado,
+                    grupo,
+                    descripcion,
+                    fecha_entrega,
+                    archivo: fileUrl,
+                    maestro: localStorage.getItem('nombre') || 'Docente',
+                    timestamp: serverTimestamp()
+                });
+
+                Swal.fire('¡Éxito!', 'La tarea ha sido publicada.', 'success');
+                document.getElementById('taskForm').reset();
+                document.getElementById('file-name').innerText = "Click para subir PDF o Imagen";
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Error', 'No se pudo subir la tarea.', 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        };
+
+        // Tema y Seguridad
+        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+        
+        const role = localStorage.getItem('role');
+        if(role !== 'maestro' && role !== 'admin') {
+            window.location.href = 'inicio.html';
+        }
+    </script>
+</body>
+</html>

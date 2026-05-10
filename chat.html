@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mi Grupo | Moisés Sáenz #2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --bg-chat: #efeae2;
+            --my-msg: #d9fdd3;
+            --other-msg: #ffffff;
+            --text: #1e293b;
+        }
+
+        body.dark-mode {
+            --bg-chat: #0b141a;
+            --my-msg: #005c4b;
+            --other-msg: #202c33;
+            --text: #e9edef;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0; background: var(--bg-chat);
+            height: 100vh; display: flex; flex-direction: column;
+            color: var(--text);
+            transition: 0.3s;
+        }
+
+        .chat-header {
+            background: var(--primary); color: white;
+            padding: 15px; display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10;
+        }
+
+        #chat-container {
+            flex: 1; overflow-y: auto; padding: 15px;
+            display: flex; flex-direction: column; gap: 8px;
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            background-blend-mode: overlay;
+        }
+
+        .message {
+            max-width: 85%; padding: 8px 12px; border-radius: 12px;
+            font-size: 14px; position: relative;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            word-wrap: break-word;
+            color: #1e293b;
+        }
+        
+        body.dark-mode .message { color: white; }
+
+        .sent { align-self: flex-end; background: var(--my-msg); border-top-right-radius: 2px; }
+        .received { align-self: flex-start; background: var(--other-msg); border-top-left-radius: 2px; }
+
+        .user-name { font-size: 11px; font-weight: 800; color: #d97706; margin-bottom: 2px; display: block; }
+        .msg-img, .msg-sticker { width: 100%; max-width: 200px; border-radius: 8px; }
+        .msg-sticker { background: transparent; box-shadow: none; }
+
+        /* Barra de entrada mejorada */
+        .input-area {
+            background: #f0f2f5; padding: 10px;
+            display: flex; align-items: center; gap: 8px;
+            padding-bottom: env(safe-area-inset-bottom, 15px);
+        }
+        body.dark-mode .input-area { background: #202c33; }
+
+        .input-area input {
+            flex: 1; border: none; padding: 12px; border-radius: 20px;
+            outline: none; font-size: 15px; background: white;
+        }
+        body.dark-mode .input-area input { background: #2a3942; color: white; }
+
+        .btn-icon { background: none; border: none; color: #64748b; cursor: pointer; padding: 5px; }
+        .btn-send { 
+            background: var(--primary); color: white; width: 45px; height: 45px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+        }
+
+        /* Panel de Stickers */
+        #sticker-panel {
+            display: none; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            padding: 15px; background: white; border-top: 1px solid #ddd;
+            max-height: 200px; overflow-y: auto;
+        }
+        body.dark-mode #sticker-panel { background: #0b141a; }
+        .sticker-option { width: 100%; cursor: pointer; transition: 0.2s; }
+        .sticker-option:hover { transform: scale(1.1); }
+
+        .recording { color: #ef4444 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="chat-header">
+        <i data-lucide="arrow-left" onclick="window.location.href='inicio.html'"></i>
+        <div>
+            <div id="group-title" style="font-weight: 800; font-size: 16px;">Cargando...</div>
+            <div style="font-size: 11px; opacity: 0.8;">Chat de salón</div>
+        </div>
+    </div>
+
+    <div id="chat-container"></div>
+
+    <div id="sticker-panel">
+        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f600/512.gif" class="sticker-option" onclick="sendSticker(this.src)">
+        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f923/512.gif" class="sticker-option" onclick="sendSticker(this.src)">
+        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f60d/512.gif" class="sticker-option" onclick="sendSticker(this.src)">
+        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f62d/512.gif" class="sticker-option" onclick="sendSticker(this.src)">
+        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f44d/512.gif" class="sticker-option" onclick="sendSticker(this.src)">
+        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f525/512.gif" class="sticker-option" onclick="sendSticker(this.src)">
+    </div>
+
+    <div class="input-area">
+        <button class="btn-icon" onclick="toggleStickers()"><i data-lucide="smile"></i></button>
+        <button class="btn-icon" onclick="document.getElementById('img-input').click()"><i data-lucide="image"></i></button>
+        
+        <input type="file" id="img-input" accept="image/*" class="hidden">
+        <input type="text" id="msg-text" placeholder="Escribe un mensaje..." autocomplete="off">
+        
+        <button class="btn-icon" id="voice-btn"><i data-lucide="mic"></i></button>
+        <button class="btn-send" id="send-btn"><i data-lucide="send"></i></button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-trG4y0yS3ldkZwcOY0Ar-s_aCt1VE-8",
+            authDomain: "escuelasecundariageneralno2.firebaseapp.com",
+            projectId: "escuelasecundariageneralno2",
+            storageBucket: "escuelasecundariageneralno2.firebasestorage.app",
+            messagingSenderId: "755206365423",
+            appId: "1:755206365423:web:81f6a2335a5ce8bfce3b1a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        lucide.createIcons();
+
+        const userGrado = localStorage.getItem('grado');
+        const userGrupo = localStorage.getItem('grupo');
+        const userName = localStorage.getItem('nombre') || "Alumno";
+        const userId = localStorage.getItem('userId') || Math.random().toString(36).substr(2, 9);
+        const roomID = `sala_${userGrado}${userGrupo}`;
+
+        document.getElementById('group-title').innerText = `Grupo ${userGrado}° "${userGrupo}"`;
+
+        const chatContainer = document.getElementById('chat-container');
+        const msgInput = document.getElementById('msg-text');
+
+        // --- ENVIAR MENSAJES ---
+        async function sendMessage(text = "", imgUrl = null, audioUrl = null, isSticker = false) {
+            if(!text.trim() && !imgUrl && !audioUrl) return;
+            try {
+                await addDoc(collection(db, "chats_grupos"), {
+                    room: roomID,
+                    text: text,
+                    image: imgUrl,
+                    audio: audioUrl,
+                    isSticker: isSticker,
+                    senderId: userId,
+                    senderName: userName,
+                    timestamp: serverTimestamp()
+                });
+                msgInput.value = "";
+                document.getElementById('sticker-panel').style.display = 'none';
+            } catch (e) { console.error("Error al enviar:", e); }
+        }
+
+        document.getElementById('send-btn').onclick = () => sendMessage(msgInput.value);
+
+        // --- STICKERS ---
+        window.toggleStickers = () => {
+            const panel = document.getElementById('sticker-panel');
+            panel.style.display = panel.style.display === 'grid' ? 'none' : 'grid';
+        };
+        window.sendSticker = (url) => sendMessage("", url, null, true);
+
+        // --- IMÁGENES ---
+        document.getElementById('img-input').onchange = async (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            Swal.fire({ title: 'Subiendo...', didOpen: () => Swal.showLoading() });
+            const sRef = ref(storage, `chats/${roomID}/img_${Date.now()}`);
+            await uploadBytes(sRef, file);
+            const url = await getDownloadURL(sRef);
+            await sendMessage("", url);
+            Swal.close();
+        };
+
+        // --- NOTAS DE VOZ ---
+        let mediaRecorder;
+        let audioChunks = [];
+        const voiceBtn = document.getElementById('voice-btn');
+
+        voiceBtn.onclick = async () => {
+            if (!mediaRecorder || mediaRecorder.state === "inactive") {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = async () => {
+                    Swal.fire({ title: 'Enviando audio...', didOpen: () => Swal.showLoading() });
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                    const sRef = ref(storage, `chats/${roomID}/audio_${Date.now()}.mp3`);
+                    await uploadBytes(sRef, audioBlob);
+                    const url = await getDownloadURL(sRef);
+                    await sendMessage("", null, url);
+                    audioChunks = [];
+                    Swal.close();
+                };
+                mediaRecorder.start();
+                voiceBtn.classList.add('recording');
+            } else {
+                mediaRecorder.stop();
+                voiceBtn.classList.remove('recording');
+            }
+        };
+
+        // --- RECIBIR MENSAJES ---
+        const q = query(collection(db, "chats_grupos"), where("room", "==", roomID), orderBy("timestamp", "asc"));
+        onSnapshot(q, (snapshot) => {
+            chatContainer.innerHTML = '';
+            snapshot.forEach((doc) => {
+                const m = doc.data();
+                const isMe = m.senderId === userId;
+                const div = document.createElement('div');
+                div.className = `message ${isMe ? 'sent' : 'received'} ${m.isSticker ? 'msg-sticker' : ''}`;
+                
+                let content = !isMe ? `<span class="user-name">${m.senderName}</span>` : '';
+                if(m.image) content += `<img src="${m.image}" class="${m.isSticker ? 'msg-sticker' : 'msg-img'}">`;
+                if(m.audio) content += `<audio controls src="${m.audio}" style="width:200px"></audio>`;
+                if(m.text) content += `<div>${m.text}</div>`;
+                
+                div.innerHTML = content;
+                chatContainer.appendChild(div);
+            });
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        });
+
+        function aplicarTemaGuardado() {
+            if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+        }
+        aplicarTemaGuardado();
+    </script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Credenciales Yoremia | Moisés Sáenz #2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --yoremia: #f37021;
+            --yoremia-soft: rgba(243, 112, 33, 0.1);
+            --text: #1e293b;
+            --glass: rgba(255, 255, 255, 0.9);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 74, 173, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(243, 112, 33, 0.1) 0px, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header-app {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; max-width: 480px; margin-bottom: 25px;
+        }
+
+        .btn-back { 
+            background: white; border: none; color: var(--primary); 
+            width: 45px; height: 45px; border-radius: 14px; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 25px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .yoremia-badge {
+            background: var(--yoremia);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        h2 { color: var(--text); font-weight: 800; margin: 0; font-size: 24px; }
+        .tagline { color: #64748b; font-size: 14px; margin-top: 5px; }
+
+        /* Widget de Acceso Rápido */
+        .quick-access {
+            background: var(--yoremia-soft);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(243, 112, 33, 0.2);
+        }
+
+        .curp-input-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 2px solid white;
+            font-family: inherit;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .btn-go {
+            background: var(--yoremia);
+            color: white;
+            border: none;
+            padding: 0 15px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .step-item {
+            display: flex; align-items: flex-start; gap: 15px;
+            margin-bottom: 18px; text-align: left;
+        }
+
+        .step-icon {
+            min-width: 32px; height: 32px;
+            background: white; color: var(--yoremia);
+            border-radius: 10px; display: flex;
+            align-items: center; justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .step-text b { color: var(--yoremia); }
+        .step-text p { margin: 2px 0 0; font-size: 13px; color: #64748b; }
+
+        .btn-action {
+            width: 100%; padding: 18px; border-radius: 20px; border: none;
+            font-weight: 800; font-size: 15px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            gap: 12px; transition: 0.3s;
+        }
+
+        .btn-yoremia { 
+            background: linear-gradient(135deg, #f37021 0%, #ff8f4a 100%);
+            color: white;
+            box-shadow: 0 10px 20px rgba(243, 112, 33, 0.3);
+        }
+
+        .info-img {
+            width: 100%; border-radius: 20px; margin-top: 15px;
+            border: 3px solid white; box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+        }
+
+        .admin-section {
+            background: #1e293b;
+            color: white;
+            padding: 20px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .hidden { display: none; }
+        :root {
+    --primary: #004aad;
+    --text: #1e293b;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #f1f5f9;
+}
+
+/* Colores cuando el modo oscuro está activo */
+body.dark-mode {
+    --bg: #0f172a;
+    --text: #f1f5f9;
+    --card: #1e293b;
+    --border: #334155;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
+}
+    </style>
+</head>
+<body>
+
+    <div class="header-app">
+        <button class="btn-back" onclick="window.location.href='inicio.html'">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <div style="text-align: right;">
+            <p style="margin:0; font-size: 10px; color: var(--primary); font-weight: 800; letter-spacing: 1px;">SISTEMA ESTATAL</p>
+            <p style="margin:0; font-size: 14px; font-weight: 800; color: var(--text);">Expediente Digital</p>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <div class="yoremia-badge">PORTAL OFICIAL</div>
+        <h2>Credencial Escolar</h2>
+        <p class="tagline">Sigue estos pasos para obtener tu identificación.</p>
+
+        <div class="quick-access">
+            <p style="margin:0; font-size: 12px; font-weight: 800; color: var(--yoremia); text-align: left;">ACCESO RÁPIDO</p>
+            <div class="curp-input-group">
+                <input type="text" id="user-curp" placeholder="Ingresa tu CURP" maxlength="18">
+                <button class="btn-go" onclick="goToYoremia()">
+                    <i data-lucide="arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div style="margin: 25px 0;">
+            <div class="step-item">
+                <div class="step-icon"><i data-lucide="user-check" size="18"></i></div>
+                <div class="step-text">
+                    <b style="font-size: 14px;">Identificación</b>
+                    <p>Usa tu CURP para iniciar sesión en el portal.</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-icon"><i data-lucide="folder-search" size="18"></i></div>
+                <div class="step-text">
+                    <b style="font-size: 14px;">Búsqueda</b>
+                    <p>Entra a "Expediente del alumno" y selecciona el ciclo actual.</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-icon"><i data-lucide="printer" size="18"></i></div>
+                <div class="step-text">
+                    <b style="font-size: 14px;">Impresión</b>
+                    <p>Descarga el PDF y asegúrate de que la foto sea visible.</p>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-action btn-yoremia" onclick="window.open('https://www.yoremia.gob.mx/', '_blank')">
+            <i data-lucide="external-link"></i>
+            Abrir Yoremia.gob.mx
+        </button>
+
+        <div id="guide-container" class="hidden">
+            <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 25px 0;">
+            <p style="font-size: 12px; font-weight: 800; color: var(--primary); text-align: left; display: flex; align-items: center; gap: 5px;">
+                <i data-lucide="info" size="14"></i> GUÍA VISUAL DE APOYO:
+            </p>
+            <img id="img-guide" class="info-img" src="" alt="Guía">
+        </div>
+    </div>
+
+    <!-- Panel Admin Mejorado -->
+    <div class="admin-section hidden" id="admin-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin:0; font-size: 16px;">Panel de Control</h3>
+            <i data-lucide="settings" size="18" style="opacity: 0.5;"></i>
+        </div>
+        <p style="font-size: 12px; opacity: 0.7; margin-bottom: 20px;">Sube una captura de pantalla del portal Yoremia para orientar a los padres.</p>
+        
+        <input type="file" id="file-input" accept="image/*" class="hidden">
+        <button class="btn-action" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);" onclick="document.getElementById('file-input').click()">
+            <i data-lucide="image-plus"></i>
+            Cambiar Imagen de Guía
+        </button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-trG4y0yS3ldkZwcOY0Ar-s_aCt1VE-8",
+            authDomain: "escuelasecundariageneralno2.firebaseapp.com",
+            projectId: "escuelasecundariageneralno2",
+            storageBucket: "escuelasecundariageneralno2.firebasestorage.app",
+            messagingSenderId: "755206365423",
+            appId: "1:755206365423:web:81f6a2335a5ce8bfce3b1a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+        const db = getFirestore(app);
+        lucide.createIcons();
+
+        // Función de Acceso Rápido
+        window.goToYoremia = () => {
+            const curp = document.getElementById('user-curp').value.trim();
+            if(curp.length > 0 && curp.length < 18) {
+                Swal.fire('CURP Incompleto', 'Revisa los datos', 'warning');
+            } else {
+                window.open('https://www.yoremia.gob.mx/', '_blank');
+            }
+        };
+
+        const role = localStorage.getItem('role');
+        if(role === 'admin') document.getElementById('admin-panel').classList.remove('hidden');
+
+        onSnapshot(doc(db, "config_yoremia", "credenciales"), (doc) => {
+            if (doc.exists()) {
+                document.getElementById('img-guide').src = doc.data().url;
+                document.getElementById('guide-container').classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('file-input').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            Swal.fire({ title: 'Actualizando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                const storageRef = ref(storage, 'yoremia/guia_v2_' + Date.now() + '.jpg');
+                await uploadBytes(storageRef, file);
+                const url = await getDownloadURL(storageRef);
+                await setDoc(doc(db, "config_yoremia", "credenciales"), { url, updatedAt: new Date() });
+                Swal.fire('¡Éxito!', 'Guía actualizada.', 'success');
+            } catch (err) {
+                Swal.fire('Error', 'Fallo en la carga', 'error');
+            }
+        });
+        // Función para aplicar el tema guardado al cargar la página
+function aplicarTemaGuardado() {
+    const temaRecuperado = localStorage.getItem('theme');
+    if (temaRecuperado === 'dark') {
+        document.body.classList.add('dark-mode');
+        // Si estás en la página de ajustes, asegúrate de que el switch se vea marcado
+        const toggle = document.getElementById('dark-mode-toggle');
+        if (toggle) toggle.checked = true;
+    }
+}
+
+// Ejecutar automáticamente al abrir cualquier página
+aplicarTemaGuardado();
+    </script>
+</body>
+</html>

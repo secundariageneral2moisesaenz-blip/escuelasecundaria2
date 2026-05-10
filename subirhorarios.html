@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Subir Horario por Grupo | Moisés Sáenz #2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --glass: rgba(255, 255, 255, 0.95);
+            --text: #1e293b;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --input-bg: #ffffff;
+        }
+
+        /* Colores cuando el modo oscuro está activo */
+        body.dark-mode {
+            --bg: #0f172a;
+            --text: #f1f5f9;
+            --glass: rgba(30, 41, 59, 0.95);
+            --card: #1e293b;
+            --border: #334155;
+            --input-bg: #1e293b;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; padding: 20px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Gradiente de fondo solo en modo claro para mantener el estilo original */
+        body:not(.dark-mode) {
+            background-image: radial-gradient(circle at 50% -20%, #00c6ff, #004aad);
+        }
+
+        .header-app {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; max-width: 450px; color: white; margin-bottom: 20px;
+        }
+
+        .main-container {
+            background: var(--card);
+            border-radius: 32px; padding: 30px;
+            width: 100%; max-width: 450px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.2);
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: background 0.3s, border 0.3s;
+        }
+
+        h2 { color: var(--primary); font-weight: 800; margin: 0; font-size: 24px; }
+        .subtitle { color: #64748b; font-size: 14px; margin: 8px 0 25px; }
+
+        .selection-row { display: flex; gap: 10px; margin-bottom: 20px; }
+
+        select {
+            width: 100%; padding: 14px; border-radius: 14px; border: 2px solid var(--border);
+            background: var(--input-bg); font-size: 15px; font-weight: 600; color: var(--text);
+            appearance: none; outline: none; transition: 0.3s;
+            cursor: pointer;
+        }
+        select:focus { border-color: var(--primary); }
+
+        .drop-zone {
+            width: 100%; height: 140px; border: 2px dashed #cbd5e1;
+            border-radius: 20px; background: var(--bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s; margin-bottom: 20px;
+        }
+
+        #preview-card {
+            background: var(--bg); border-radius: 20px; padding: 10px;
+            border: 2px solid var(--primary); margin-bottom: 20px; position: relative;
+        }
+        #image-preview { width: 100%; border-radius: 12px; max-height: 250px; object-fit: contain; }
+
+        .btn-primary {
+            width: 100%; padding: 18px; background: var(--primary); color: white;
+            border: none; border-radius: 18px; font-weight: 800; font-size: 16px;
+            cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-primary:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-2px); }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="header-app">
+        <button style="background:none; border:none; color:white; cursor:pointer;" onclick="history.back()">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <h1 style="font-size: 16px; font-weight: 800; margin: 0;">GESTIÓN DE HORARIOS</h1>
+        <div style="width:24px;"></div>
+    </div>
+
+    <div class="main-container">
+        <h2>Actualizar Grupo</h2>
+        <p class="subtitle">Selecciona el grupo específico para subir su horario.</p>
+
+        <div class="selection-row">
+            <select id="turno">
+                <option value="" disabled selected>Turno</option>
+                <option value="matutino">Matutino</option>
+                <option value="vespertino">Vespertino</option>
+            </select>
+
+            <select id="grupo">
+                <option value="" disabled selected>Grupo</option>
+            </select>
+        </div>
+
+        <div class="drop-zone" id="drop-zone">
+            <i data-lucide="image-plus" size="28" style="color: var(--primary);"></i>
+            <p style="margin:5px 0 0; font-weight:700; font-size:13px; color: var(--text);">Elegir Imagen</p>
+            <input type="file" id="file-input" accept="image/*" class="hidden">
+        </div>
+
+        <div id="preview-card" class="hidden">
+            <img id="image-preview" src="">
+            <p id="file-info" style="font-size: 11px; color: #64748b; margin-top: 5px;"></p>
+            <button onclick="resetFile()" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:800; cursor:pointer; margin-top:5px;">Cambiar imagen</button>
+        </div>
+
+        <button id="btn-submit" class="btn-primary" disabled>
+            <i data-lucide="upload" size="18"></i>
+            Publicar Horario
+        </button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-trG4y0yS3ldkZwcOY0Ar-s_aCt1VE-8",
+            authDomain: "escuelasecundariageneralno2.firebaseapp.com",
+            projectId: "escuelasecundariageneralno2",
+            storageBucket: "escuelasecundariageneralno2.firebasestorage.app",
+            messagingSenderId: "755206365423",
+            appId: "1:755206365423:web:81f6a2335a5ce8bfce3b1a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+        const db = getFirestore(app);
+        lucide.createIcons();
+
+        // Aplicar Tema
+        function aplicarTemaGuardado() {
+            const temaRecuperado = localStorage.getItem('theme');
+            if (temaRecuperado === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        }
+        aplicarTemaGuardado();
+
+        const grupoSelect = document.getElementById('grupo');
+        const letras = "ABCDEFGHIJK".split("");
+        letras.forEach(letra => {
+            let opt = document.createElement('option');
+            opt.value = letra;
+            opt.innerHTML = `Grupo ${letra}`;
+            grupoSelect.appendChild(opt);
+        });
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const previewCard = document.getElementById('preview-card');
+        const imagePreview = document.getElementById('image-preview');
+        const btnSubmit = document.getElementById('btn-submit');
+        const turnoSelect = document.getElementById('turno');
+        let selectedFile = null;
+
+        dropZone.onclick = () => fileInput.click();
+
+        window.resetFile = () => {
+            selectedFile = null;
+            fileInput.value = "";
+            previewCard.classList.add('hidden');
+            dropZone.classList.remove('hidden');
+            checkForm();
+        };
+        
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                imagePreview.src = ev.target.result;
+                previewCard.classList.remove('hidden');
+                dropZone.classList.add('hidden');
+                checkForm();
+            };
+            reader.readAsDataURL(file);
+        };
+
+        const checkForm = () => {
+            btnSubmit.disabled = !(selectedFile && turnoSelect.value && grupoSelect.value);
+        };
+
+        turnoSelect.onchange = checkForm;
+        grupoSelect.onchange = checkForm;
+
+        btnSubmit.onclick = async () => {
+            const turno = turnoSelect.value;
+            const grupo = grupoSelect.value;
+            
+            Swal.fire({ 
+                title: 'Publicando...', 
+                text: 'Guardando horario en la nube',
+                allowOutsideClick: false, 
+                didOpen: () => Swal.showLoading() 
+            });
+
+            try {
+                const path = `horarios/${turno}/horario_${grupo}.jpg`;
+                const storageRef = ref(storage, path);
+                
+                await uploadBytes(storageRef, selectedFile);
+                const url = await getDownloadURL(storageRef);
+
+                await setDoc(doc(db, "horarios", `${turno}_${grupo}`), {
+                    url: url,
+                    turno: turno,
+                    grupo: grupo,
+                    updatedAt: serverTimestamp()
+                });
+
+                Swal.fire({
+                    title: '¡Actualizado!',
+                    text: `El horario del Grupo ${grupo} (${turno}) ya está disponible para los alumnos.`,
+                    icon: 'success',
+                    confirmButtonColor: '#004aad'
+                }).then(() => location.reload());
+
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Error', 'Hubo un fallo al subir el horario.', 'error');
+            }
+        };
+    </script>
+</body>
+</html>

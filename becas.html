@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Beca Rita Cetina | Portal Moisés Sáenz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --guinda: #621132;
+            --oro: #B38E5D;
+            --glass: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.5);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: linear-gradient(-45deg, #004aad, #621132, #0072ff, #B38E5D);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .header-app {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; max-width: 480px; color: white; margin-bottom: 20px;
+        }
+
+        .btn-back { background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px; border-radius: 50%; cursor: pointer; transition: 0.3s; }
+        .btn-back:hover { background: rgba(255,255,255,0.3); }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 25px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+
+        .beca-header { text-align: center; margin-bottom: 20px; }
+        .beca-header h2 { color: var(--guinda); font-weight: 800; margin: 5px 0 0; font-size: 24px; }
+        .beca-header p { color: #475569; font-size: 13px; margin-top: 5px; }
+
+        .info-box {
+            background: rgba(98, 17, 50, 0.05);
+            border-left: 4px solid var(--guinda);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .image-container {
+            width: 100%;
+            min-height: 250px;
+            background: #f1f5f9;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .image-container img { width: 100%; height: auto; display: block; transition: opacity 0.5s; }
+
+        .btn-action {
+            width: 100%; padding: 16px; border-radius: 16px; border: none;
+            font-weight: 700; font-size: 15px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; transition: 0.3s; margin-top: 15px;
+        }
+
+        .btn-register { background: var(--guinda); color: white; box-shadow: 0 4px 15px rgba(98, 17, 50, 0.3); }
+        .btn-upload { background: var(--oro); color: white; }
+        .btn-action:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-action:active { transform: scale(0.98); }
+
+        /* Shimmer effect para carga */
+        .loading-shimmer {
+            width: 100%; height: 250px;
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        .hidden { display: none; }
+        :root {
+    --primary: #004aad;
+    --text: #1e293b;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #f1f5f9;
+}
+
+/* Colores cuando el modo oscuro está activo */
+body.dark-mode {
+    --bg: #0f172a;
+    --text: #f1f5f9;
+    --card: #1e293b;
+    --border: #334155;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
+}
+    </style>
+</head>
+<body>
+
+    <div class="header-app">
+        <button class="btn-back" onclick="window.location.href='inicio.html'">
+            <i data-lucide="arrow-left"></i>
+        </button>
+        <h1 style="font-size: 18px; font-weight: 800; margin: 0;">Programas Federales</h1>
+        <div style="width:40px;"></div>
+    </div>
+
+    <div class="glass-card">
+        <div class="beca-header">
+            <i data-lucide="graduation-cap" style="width: 48px; height: 48px; color: var(--guinda);"></i>
+            <h2>Beca Rita Cetina</h2>
+            <p>Convocatoria Oficial para Secundarias</p>
+        </div>
+
+        <div class="info-box">
+            <i data-lucide="info" style="width:16px; height:16px; inline-block; vertical-align: middle; margin-right: 5px;"></i>
+            <strong>Importante:</strong> El registro debe realizarlo el padre, madre o tutor legal. Asegúrate de tener los documentos escaneados en formato PDF o imagen.
+        </div>
+
+        <div class="image-container" id="container-visualizer">
+            <div id="loader" class="loading-shimmer"></div>
+            <img id="img-convocatoria" class="hidden" alt="Convocatoria">
+        </div>
+
+        <button class="btn-action btn-register" onclick="window.open('https://www.becaritacetina.gob.mx/', '_blank')">
+            <i data-lucide="external-link"></i>
+            Acceder al Registro Nacional
+        </button>
+    </div>
+
+    <!-- PANEL ADMINISTRATIVO (Solo visible para directivos/admin) -->
+    <div class="glass-card hidden" id="admin-panel">
+        <h3 style="color: var(--guinda); margin-top: 0; display: flex; align-items: center; gap: 10px; font-size: 16px;">
+            <i data-lucide="settings"></i> Gestión de Contenido
+        </h3>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 15px;">Sube el cartel informativo más reciente para que los padres estén al tanto.</p>
+        
+        <input type="file" id="file-upload" accept="image/*" class="hidden">
+        <button class="btn-action btn-upload" onclick="document.getElementById('file-upload').click()">
+            <i data-lucide="upload-cloud"></i>
+            Cambiar Imagen del Portal
+        </button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-trG4y0yS3ldkZwcOY0Ar-s_aCt1VE-8",
+            authDomain: "escuelasecundariageneralno2.firebaseapp.com",
+            projectId: "escuelasecundariageneralno2",
+            storageBucket: "escuelasecundariageneralno2.firebasestorage.app",
+            messagingSenderId: "755206365423",
+            appId: "1:755206365423:web:81f6a2335a5ce8bfce3b1a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+        const db = getFirestore(app);
+        lucide.createIcons();
+
+        const role = localStorage.getItem('role');
+        const imgElement = document.getElementById('img-convocatoria');
+        const loader = document.getElementById('loader');
+
+        // Seguridad de Interfaz
+        if(role === 'admin' || role === 'maestro') {
+            document.getElementById('admin-panel').classList.remove('hidden');
+        }
+
+        // --- ESCUCHA DE CAMBIOS EN TIEMPO REAL ---
+        // Usar onSnapshot asegura que si el admin cambia la imagen, a los alumnos se les actualiza sin recargar
+        onSnapshot(doc(db, "config_becas", "rita_cetina"), (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                // Añadimos un parámetro de tiempo a la URL para forzar la actualización (Cache Busting)
+                imgElement.src = `${data.url}?t=${Date.now()}`;
+                imgElement.onload = () => {
+                    imgElement.classList.remove('hidden');
+                    loader.classList.add('hidden');
+                };
+            } else {
+                loader.innerHTML = '<p style="padding:20px; text-align:center; color:#94a3b8">No hay convocatoria disponible por el momento.</p>';
+                loader.style.background = "#f1f5f9";
+            }
+        });
+
+        // --- PROCESO DE ACTUALIZACIÓN (ADMIN) ---
+        document.getElementById('file-upload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            // Validación de tipo
+            if(!file.type.startsWith('image/')) {
+                return Swal.fire('Error', 'El archivo debe ser una imagen (JPG o PNG).', 'error');
+            }
+
+            Swal.fire({
+                title: 'Actualizando portal...',
+                text: 'Esto cambiará la imagen para todos los usuarios.',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            try {
+                // Sobreescribimos el mismo archivo para no llenar el storage de basura
+                const storageRef = ref(storage, 'config/rita_cetina_convocatoria.jpg');
+                await uploadBytes(storageRef, file);
+                const url = await getDownloadURL(storageRef);
+
+                // Actualizamos la referencia en Firestore
+                await setDoc(doc(db, "config_becas", "rita_cetina"), {
+                    url: url,
+                    updatedAt: new Date(),
+                    updatedBy: localStorage.getItem('nombre') || 'Admin'
+                });
+
+                Swal.fire('¡Actualizado!', 'La nueva convocatoria ya es pública.', 'success');
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Error', 'Hubo un fallo en la subida. Verifica tu conexión.', 'error');
+            }
+        });
+        // Función para aplicar el tema guardado al cargar la página
+function aplicarTemaGuardado() {
+    const temaRecuperado = localStorage.getItem('theme');
+    if (temaRecuperado === 'dark') {
+        document.body.classList.add('dark-mode');
+        // Si estás en la página de ajustes, asegúrate de que el switch se vea marcado
+        const toggle = document.getElementById('dark-mode-toggle');
+        if (toggle) toggle.checked = true;
+    }
+}
+
+// Ejecutar automáticamente al abrir cualquier página
+aplicarTemaGuardado();
+    </script>
+</body>
+</html>

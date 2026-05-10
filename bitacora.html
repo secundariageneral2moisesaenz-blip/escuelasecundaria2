@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Documentos | Moisés Sáenz #2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text: #1e293b;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: linear-gradient(-45deg, #004aad, #00c6ff, #0072ff, #00c6ff);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .header-app {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; max-width: 600px; color: white; margin-bottom: 20px;
+        }
+
+        .btn-back { background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px; border-radius: 50%; cursor: pointer; }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 25px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        h2 { color: var(--primary); font-weight: 800; margin: 0 0 5px; font-size: 20px; text-align: center; }
+        .subtitle { color: #64748b; font-size: 13px; text-align: center; margin-bottom: 20px; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .input-group { text-align: left; margin-bottom: 10px; }
+        label { font-size: 11px; font-weight: 800; color: var(--primary); margin-left: 5px; text-transform: uppercase; }
+        
+        input, select, textarea {
+            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1);
+            background: white; font-size: 14px; outline: none; margin-top: 5px; font-family: inherit;
+        }
+
+        .btn-print {
+            width: 100%; padding: 16px; background: var(--primary); color: white;
+            border: none; border-radius: 16px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.3s;
+        }
+        .btn-print:hover { background: #003a8c; transform: translateY(-2px); }
+
+        /* ÁREA DE IMPRESIÓN */
+        #print-area { display: none; }
+
+        @media print {
+            @page { margin: 2cm; }
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area {
+                display: block !important;
+                position: absolute; left: 0; top: 0; width: 100%;
+                background: white; color: black;
+            }
+            .print-header { border-bottom: 2px solid black; padding-bottom: 15px; margin-bottom: 30px; display: flex; align-items: center; gap: 20px; }
+            .print-logo { width: 90px; height: auto; }
+            .print-body { font-size: 14pt; line-height: 1.8; text-align: justify; }
+            .signature-container { margin-top: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+            .line-sign { border-top: 1px solid black; text-align: center; padding-top: 10px; font-size: 12pt; font-weight: bold; }
+        }
+
+        .full-width { grid-column: span 2; }
+        :root {
+    --primary: #004aad;
+    --text: #1e293b;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #f1f5f9;
+}
+
+/* Colores cuando el modo oscuro está activo */
+body.dark-mode {
+    --bg: #0f172a;
+    --text: #f1f5f9;
+    --card: #1e293b;
+    --border: #334155;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
+}
+    </style>
+</head>
+<body>
+
+    <div class="header-app no-print">
+        <button class="btn-back" onclick="window.location.href='inicio.html'">
+            <i data-lucide="arrow-left"></i>
+        </button>
+        <h1 style="font-size: 18px; font-weight: 800; margin: 0;">Gestión de Documentos</h1>
+        <div style="width:40px;"></div>
+    </div>
+
+    <div class="glass-card no-print">
+        <h2>Generar Oficio</h2>
+        <p class="subtitle">Completa los campos para generar el documento oficial.</p>
+
+        <form id="docForm">
+            <div class="input-group">
+                <label>Tipo de Documento</label>
+                <select id="doc-type" onchange="cambiarFormulario()">
+                    <option value="reporte">Reporte de Conducta</option>
+                    <option value="citatorio">Citatorio para Padres</option>
+                    <option value="justificante">Justificante de Faltas</option>
+                    <option value="aviso">Aviso General</option>
+                </select>
+            </div>
+
+            <div class="form-grid">
+                <div class="input-group full-width">
+                    <label>Nombre Completo del Alumno</label>
+                    <input type="text" id="alumno-name" placeholder="Ej. Juan Pérez López">
+                </div>
+                <div class="input-group">
+                    <label>CURP (Opcional)</label>
+                    <input type="text" id="alumno-curp" placeholder="CURP" maxlength="18">
+                </div>
+                <div class="input-group">
+                    <label>Fecha de Expedición</label>
+                    <input type="date" id="fecha-doc">
+                </div>
+                <div class="input-group">
+                    <label>Grado</label>
+                    <select id="grado-doc">
+                        <option value="1°">1° Secundaria</option>
+                        <option value="2°">2° Secundaria</option>
+                        <option value="3°">3° Secundaria</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Grupo</label>
+                    <input type="text" id="grupo-doc" placeholder="Ej: A" maxlength="1" style="text-transform: uppercase;">
+                </div>
+                
+                <div class="input-group full-width">
+                    <label id="label-motivo">Detalles del Reporte</label>
+                    <textarea id="motivo-text" rows="4" placeholder="Describa la situación detalladamente..."></textarea>
+                </div>
+            </div>
+
+            <button type="button" class="btn-print" onclick="prepararImpresion()">
+                <i data-lucide="printer"></i> Generar e Imprimir
+            </button>
+        </form>
+    </div>
+
+    <div id="print-area">
+        <div class="print-header">
+            <img src="ESCGM2.jpg" class="print-logo" alt="Logo Escuela">
+            <div>
+                <h1 style="margin:0; font-size: 24px; color: black;">ESC. SEC. GRAL. No. 2 "Moisés Sáenz"</h1>
+                <p style="margin:0; font-size: 14px; color: #333;">Clave de C.T. 26DES0014A | Ciudad Obregón, Sonora</p>
+                <p style="margin:0; font-size: 12px; font-weight: bold;">PORTAL DIGITAL DE GESTIÓN ADMINISTRATIVA</p>
+            </div>
+        </div>
+
+        <div class="print-body">
+            <h2 id="print-titulo" style="text-align: center; text-decoration: underline; margin-bottom: 40px; font-size: 20px;"></h2>
+            
+            <p style="text-align: right; margin-bottom: 30px;"><b>Asunto:</b> <span id="p-asunto">Oficio Informativo</span><br>
+            <b>Fecha:</b> <span id="p-fecha"></span></p>
+            
+            <p><b>A QUIEN CORRESPONDA:</b></p>
+            
+            <p id="print-contenido"></p>
+
+            <p style="margin-top: 40px;">Sin más por el momento, agradezco de antemano su atención y colaboración.</p>
+            
+            <p><b>Atentamente,</b></p>
+        </div>
+
+        <div class="signature-container">
+            <div class="line-sign">Firma del Maestro / Prefecto</div>
+            <div class="line-sign">Sello de la Institución</div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        // Cargar fecha actual por defecto
+        document.getElementById('fecha-doc').valueAsDate = new Date();
+
+        function cambiarFormulario() {
+            const type = document.getElementById('doc-type').value;
+            const labelMotivo = document.getElementById('label-motivo');
+            
+            const labels = {
+                'reporte': 'Detalles de la falta cometida',
+                'citatorio': 'Asunto de la cita, lugar y hora sugerida',
+                'justificante': 'Razón médica o personal (incluir fechas de falta)',
+                'aviso': 'Mensaje o instrucción general'
+            };
+            labelMotivo.innerText = labels[type];
+        }
+
+        function formatearFecha(fechaStr) {
+            const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+            const fecha = new Date(fechaStr + 'T00:00:00');
+            return fecha.toLocaleDateString('es-MX', opciones);
+        }
+
+        function prepararImpresion() {
+            const tipo = document.getElementById('doc-type').value;
+            const alumno = document.getElementById('alumno-name').value.trim();
+            const fecha = document.getElementById('fecha-doc').value;
+            const grado = document.getElementById('grado-doc').value;
+            const grupo = document.getElementById('grupo-doc').value.toUpperCase();
+            const motivo = document.getElementById('motivo-text').value.trim();
+
+            if(!alumno || !motivo) {
+                return Swal.fire('Campos incompletos', 'El nombre del alumno y el motivo son obligatorios.', 'error');
+            }
+
+            // Inyectar datos en el área de impresión
+            document.getElementById('p-fecha').innerText = formatearFecha(fecha);
+            
+            let titulo = "";
+            let contenido = "";
+            let asuntoLabel = "";
+
+            switch(tipo) {
+                case 'reporte':
+                    titulo = "REPORTE DE INCIDENCIA DISCIPLINARIA";
+                    asuntoLabel = "Reporte de Conducta";
+                    contenido = `Por medio de la presente, se hace de su conocimiento que el alumno(a) <b>${alumno}</b>, quien cursa el <b>${grado} grado, grupo ${grupo}</b> en esta institución, ha incurrido en la siguiente falta al reglamento escolar: <br><br> <i>"${motivo}"</i>. <br><br> Se extiende el presente para los fines administrativos y formativos que correspondan.`;
+                    break;
+                case 'citatorio':
+                    titulo = "CITATORIO OFICIAL";
+                    asuntoLabel = "Citatorio a Padre de Familia";
+                    contenido = `Se solicita la presencia del padre de familia o tutor del alumno(a) <b>${alumno}</b> del grupo <b>${grado} ${grupo}</b>, para tratar asuntos de suma importancia relacionados con: <br><br> <b>${motivo}</b>. <br><br> Se le agradece su puntual asistencia para dar seguimiento oportuno al proceso académico del estudiante.`;
+                    break;
+                case 'justificante':
+                    titulo = "OFICIO JUSTIFICANTE DE INASISTENCIAS";
+                    asuntoLabel = "Justificación de Faltas";
+                    contenido = `La dirección de la escuela hace constar que el alumno(a) <b>${alumno}</b> de <b>${grado} ${grupo}</b>, justificó su inasistencia ante esta oficina debido a: <br><br> <i>${motivo}</i>. <br><br> Por lo anterior, se solicita a los docentes correspondientes brindar las facilidades para la recepción de tareas, trabajos o exámenes pendientes durante dicho periodo.`;
+                    break;
+                case 'aviso':
+                    titulo = "AVISO GENERAL A LA COMUNIDAD";
+                    asuntoLabel = "Comunicación Oficial";
+                    contenido = `Se informa lo siguiente en relación al alumno(a) <b>${alumno}</b> de <b>${grado} ${grupo}</b>: <br><br> ${motivo}`;
+                    break;
+            }
+
+            document.getElementById('print-titulo').innerText = titulo;
+            document.getElementById('p-asunto').innerText = asuntoLabel;
+            document.getElementById('print-contenido').innerHTML = contenido;
+
+            // Ejecutar impresión
+            window.print();
+        }
+
+        // Validación de Seguridad
+        const role = localStorage.getItem('role');
+        if(role !== 'admin' && role !== 'maestro') {
+            Swal.fire({
+                title: 'Acceso Denegado',
+                text: 'No tienes permisos para emitir documentos oficiales.',
+                icon: 'error',
+                confirmButtonColor: '#004aad'
+            }).then(() => window.location.href = 'inicio.html');
+        }
+        // Función para aplicar el tema guardado al cargar la página
+function aplicarTemaGuardado() {
+    const temaRecuperado = localStorage.getItem('theme');
+    if (temaRecuperado === 'dark') {
+        document.body.classList.add('dark-mode');
+        // Si estás en la página de ajustes, asegúrate de que el switch se vea marcado
+        const toggle = document.getElementById('dark-mode-toggle');
+        if (toggle) toggle.checked = true;
+    }
+}
+
+// Ejecutar automáticamente al abrir cualquier página
+aplicarTemaGuardado();
+    </script>
+</body>
+</html>

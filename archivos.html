@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Subir Archivos | Moisés Sáenz #2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --primary-dark: #003580;
+            --glass: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text: #1e293b;
+            --success: #059669;
+            --bg: #f8fafc;
+        }
+
+        body.dark-mode {
+            --bg: #0f172a;
+            --text: #f1f5f9;
+            --glass: rgba(30, 41, 59, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .header-app {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; max-width: 550px; margin-bottom: 20px;
+        }
+
+        .btn-back { 
+            background: var(--primary); border: none; color: white; 
+            padding: 10px; border-radius: 50%; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 25px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        h2 { color: var(--primary); font-weight: 800; margin: 0 0 5px; font-size: 20px; text-align: center; }
+        .subtitle { color: #64748b; font-size: 13px; text-align: center; margin-bottom: 25px; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: span 2; }
+
+        .input-group { text-align: left; margin-bottom: 12px; }
+        label { font-size: 11px; font-weight: 800; color: var(--primary); margin-left: 5px; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        
+        input, select {
+            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1);
+            background: white; color: #1e293b; font-size: 14px; outline: none; transition: 0.3s;
+        }
+        body.dark-mode input, body.dark-mode select { background: #0f172a; color: white; border-color: #334155; }
+
+        .file-selector {
+            width: 100%; border: 2px dashed rgba(0, 74, 173, 0.2);
+            border-radius: 18px; padding: 25px; text-align: center;
+            background: rgba(255,255,255,0.5); margin: 15px 0; cursor: pointer;
+            transition: 0.3s; position: relative;
+        }
+        .file-selector.has-file { border-color: var(--success); background: rgba(5, 150, 105, 0.05); }
+
+        .btn-upload {
+            width: 100%; padding: 16px; background: var(--primary); color: white;
+            border: none; border-radius: 16px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-top: 10px; transition: 0.3s;
+        }
+        .btn-upload:disabled { background: #94a3b8; cursor: not-allowed; }
+
+        #file-name-display { 
+            font-size: 12px; color: var(--success); font-weight: 700; 
+            margin-top: 10px; display: none; word-break: break-all;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="header-app">
+        <button class="btn-back" onclick="window.location.href='inicio.html'">
+            <i data-lucide="arrow-left"></i>
+        </button>
+        <h1 style="font-size: 18px; font-weight: 800; margin: 0;">Expediente Digital</h1>
+        <div style="width:40px;"></div>
+    </div>
+
+    <div class="glass-card">
+        <h2>Asignar Documento</h2>
+        <p class="subtitle">Vincule archivos PDF o imágenes al perfil oficial del alumno.</p>
+        
+        <form id="uploadForm">
+            <div class="form-grid">
+                <div class="input-group full-width">
+                    <label>Nombre Completo del Alumno</label>
+                    <input type="text" id="alumno-nombre" placeholder="Nombre completo" required>
+                </div>
+
+                <div class="input-group full-width">
+                    <label>CURP del Alumno</label>
+                    <input type="text" id="alumno-curp" placeholder="18 caracteres" maxlength="18" style="text-transform: uppercase;" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Grado</label>
+                    <select id="alumno-grado" required>
+                        <option value="1">1° Secundaria</option>
+                        <option value="2">2° Secundaria</option>
+                        <option value="3">3° Secundaria</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Grupo</label>
+                    <select id="alumno-grupo" required>
+                        <option value="A">A</option><option value="B">B</option>
+                        <option value="C">C</option><option value="D">D</option>
+                        <option value="E">E</option><option value="F">F</option>
+                        <option value="G">G</option><option value="H">H</option>
+                        <option value="I">I</option><option value="J">J</option>
+                        <option value="K">K</option>
+                    </select>
+                </div>
+
+                <div class="input-group full-width">
+                    <label>Tipo de Documento</label>
+                    <select id="tipo-documento" required>
+                        <option value="boleta">Boleta de Calificaciones</option>
+                        <option value="certificado">Certificado de Estudios</option>
+                        <option value="constancia">Constancia de Estudios</option>
+                        <option value="buena_conducta">Carta de Buena Conducta</option>
+                        <option value="inscripcion">Comprobante de Inscripción</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="file-selector" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                <i data-lucide="upload-cloud" id="upload-icon" style="color: var(--primary); margin-bottom: 5px;"></i>
+                <p id="upload-text" style="margin:0; font-size:13px; font-weight:600; color: #475569;">Presiona para elegir archivo</p>
+                <input type="file" id="file-input" class="hidden" accept=".pdf, .jpg, .jpeg, .png">
+                <div id="file-name-display"></div>
+            </div>
+
+            <button type="submit" class="btn-upload" id="btn-submit">
+                <i data-lucide="save"></i>
+                Vincular y Guardar
+            </button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-trG4y0yS3ldkZwcOY0Ar-s_aCt1VE-8",
+            authDomain: "escuelasecundariageneralno2.firebaseapp.com",
+            projectId: "escuelasecundariageneralno2",
+            storageBucket: "escuelasecundariageneralno2.firebasestorage.app",
+            messagingSenderId: "755206365423",
+            appId: "1:755206365423:web:81f6a2335a5ce8bfce3b1a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+        const db = getFirestore(app);
+        lucide.createIcons();
+
+        // Aplicar Tema
+        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+
+        const fileInput = document.getElementById('file-input');
+        const fileNameDisplay = document.getElementById('file-name-display');
+        const dropZone = document.getElementById('drop-zone');
+        const uploadText = document.getElementById('upload-text');
+
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if(file) {
+                if(file.size > 10 * 1024 * 1024) { // Límite 10MB para mayor flexibilidad
+                    Swal.fire('Archivo muy pesado', 'El límite es de 10MB.', 'warning');
+                    fileInput.value = ""; return;
+                }
+                fileNameDisplay.innerText = "📄 " + file.name;
+                fileNameDisplay.style.display = "block";
+                uploadText.style.display = "none";
+                dropZone.classList.add('has-file');
+            }
+        };
+
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            const file = fileInput.files[0];
+            const curp = document.getElementById('alumno-curp').value.trim().toUpperCase();
+            const nombre = document.getElementById('alumno-nombre').value.trim();
+            const tipo = document.getElementById('tipo-documento').value;
+
+            if(!file) return Swal.fire('Falta archivo', 'Selecciona un documento.', 'error');
+            if(curp.length !== 18) return Swal.fire('CURP Inválida', 'Debe tener 18 caracteres.', 'warning');
+
+            btn.disabled = true;
+            Swal.fire({ title: 'Subiendo Documento...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                // 1. Subida a Storage
+                const fileExt = file.name.split('.').pop();
+                const storagePath = `expedientes/${curp}/${tipo}_${Date.now()}.${fileExt}`;
+                const storageRef = ref(storage, storagePath);
+                
+                const snapshot = await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+
+                // 2. Registro en Firestore
+                await addDoc(collection(db, "archivos_alumnos"), {
+                    alumno_curp: curp,
+                    alumno_nombre: nombre,
+                    grado: document.getElementById('alumno-grado').value,
+                    grupo: document.getElementById('alumno-grupo').value,
+                    tipo_documento: tipo,
+                    archivo_url: downloadURL,
+                    nombre_archivo_original: file.name,
+                    fecha_subida: serverTimestamp(),
+                    subido_por: localStorage.getItem('nombre') || 'Personal'
+                });
+
+                Swal.fire('¡Éxito!', 'Documento guardado correctamente.', 'success').then(() => location.reload());
+
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Error', 'No se pudo subir. Verifica tu conexión.', 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>

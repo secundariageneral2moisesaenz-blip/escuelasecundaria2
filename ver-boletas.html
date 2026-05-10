@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expediente Digital | Moisés Sáenz #2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0; background: #f8fafc; color: var(--text); padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .header {
+            background: white; padding: 25px; border-radius: 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px;
+        }
+
+        .header h1 { margin: 0; font-size: 22px; font-weight: 800; color: var(--primary); }
+
+        /* Filtros */
+        .filters {
+            display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 20px;
+        }
+
+        .filters input, .filters select {
+            padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; outline: none;
+        }
+
+        /* Tarjetas de Archivos */
+        .file-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;
+        }
+
+        .file-card {
+            background: white; padding: 20px; border-radius: 20px;
+            border: 1px solid #f1f5f9; transition: 0.3s;
+            display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .file-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+
+        .icon-box {
+            width: 50px; height: 50px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .bg-doc { background: #dbeafe; color: #1e40af; }
+        
+        .file-info { flex: 1; }
+        .file-info h4 { margin: 0; font-size: 14px; color: var(--text); }
+        .file-info p { margin: 2px 0 0; font-size: 11px; color: #64748b; font-weight: 700; }
+
+        .tag {
+            display: inline-block; padding: 4px 8px; border-radius: 6px;
+            font-size: 10px; font-weight: 800; text-transform: uppercase; margin-top: 5px;
+        }
+        .tag-boleta { background: #dcfce7; color: #166534; }
+        .tag-certificado { background: #fef9c3; color: #854d0e; }
+        .tag-constancia { background: #f1f5f9; color: #475569; }
+
+        .actions { display: flex; gap: 8px; }
+        .btn-icon {
+            width: 35px; height: 35px; border-radius: 10px; border: none;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .btn-view { background: #f1f5f9; color: #64748b; }
+        .btn-delete { background: #fee2e2; color: #ef4444; }
+        :root {
+    --primary: #004aad;
+    --text: #1e293b;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #f1f5f9;
+}
+
+/* Colores cuando el modo oscuro está activo */
+body.dark-mode {
+    --bg: #0f172a;
+    --text: #f1f5f9;
+    --card: #1e293b;
+    --border: #334155;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
+}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Expediente Escolar</h1>
+        <a href="inicio.html" style="text-decoration:none; color:#64748b; font-weight:800; font-size:12px;">VOLVER</a>
+    </div>
+
+    <div class="filters">
+        <input type="text" id="searchCURP" placeholder="Buscar por CURP de alumno..." onkeyup="filterDocs()">
+        <select id="searchType" onchange="filterDocs()">
+            <option value="todos">Todos los tipos</option>
+            <option value="boleta">Boletas</option>
+            <option value="certificado">Certificados</option>
+            <option value="constancia">Constancias</option>
+            <option value="buena_conducta">Buena Conducta</option>
+        </select>
+    </div>
+
+    <div class="file-grid" id="docs-container">
+        </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getStorage, ref, deleteObject } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyC-trG4y0yS3ldkZwcOY0Ar-s_aCt1VE-8",
+        authDomain: "escuelasecundariageneralno2.firebaseapp.com",
+        projectId: "escuelasecundariageneralno2",
+        storageBucket: "escuelasecundariageneralno2.firebasestorage.app",
+        messagingSenderId: "755206365423",
+        appId: "1:755206365423:web:81f6a2335a5ce8bfce3b1a"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    lucide.createIcons();
+
+    const container = document.getElementById('docs-container');
+
+    onSnapshot(collection(db, "boletas_registros"), (snapshot) => {
+        container.innerHTML = '';
+        snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const card = document.createElement('div');
+            card.className = 'file-card';
+            card.dataset.curp = data.curp.toUpperCase();
+            card.dataset.tipo = data.tipo || 'boleta';
+
+            card.innerHTML = `
+                <div class="icon-box bg-doc">
+                    <i data-lucide="file-text"></i>
+                </div>
+                <div class="file-info">
+                    <h4>${data.curp}</h4>
+                    <p>${data.fecha}</p>
+                    <span class="tag tag-${data.tipo || 'boleta'}">${data.tipo || 'boleta'}</span>
+                </div>
+                <div class="actions">
+                    <a href="${data.url}" target="_blank" class="btn-icon btn-view"><i data-lucide="external-link" size="18"></i></a>
+                    <button class="btn-icon btn-delete" onclick="eliminarDoc('${data.curp}', '${data.tipo || 'boleta'}')"><i data-lucide="trash" size="18"></i></button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+        lucide.createIcons();
+    });
+
+    window.filterDocs = function() {
+        const curpVal = document.getElementById('searchCURP').value.toUpperCase();
+        const typeVal = document.getElementById('searchType').value;
+        const cards = document.querySelectorAll('.file-card');
+
+        cards.forEach(card => {
+            const matchCurp = card.dataset.curp.includes(curpVal);
+            const matchType = typeVal === 'todos' || card.dataset.tipo === typeVal;
+            card.style.display = (matchCurp && matchType) ? 'flex' : 'none';
+        });
+    }
+// Función para aplicar el tema guardado al cargar la página
+function aplicarTemaGuardado() {
+    const temaRecuperado = localStorage.getItem('theme');
+    if (temaRecuperado === 'dark') {
+        document.body.classList.add('dark-mode');
+        // Si estás en la página de ajustes, asegúrate de que el switch se vea marcado
+        const toggle = document.getElementById('dark-mode-toggle');
+        if (toggle) toggle.checked = true;
+    }
+}
+
+// Ejecutar automáticamente al abrir cualquier página
+aplicarTemaGuardado();
+</script>
+</body>
+</html>

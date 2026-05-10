@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mis Tareas | Moisés Sáenz #2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004aad;
+            --glass: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text: #1e293b;
+            --accent: #f59e0b;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: linear-gradient(-45deg, #004aad, #0072ff, #00c6ff, #004aad);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .header-app {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; max-width: 500px; color: white; margin: 0 auto 20px;
+        }
+
+        .btn-back { background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px; border-radius: 50%; cursor: pointer; }
+
+        .student-info {
+            max-width: 500px; margin: 0 auto 20px; text-align: center; color: white;
+        }
+
+        .container { max-width: 500px; margin: 0 auto; }
+
+        .tarea-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .materia-tag {
+            font-size: 10px; font-weight: 800; color: white;
+            background: var(--primary); padding: 4px 12px;
+            border-radius: 20px; text-transform: uppercase;
+        }
+
+        .fecha-entrega {
+            position: absolute; top: 20px; right: 20px;
+            font-size: 11px; font-weight: 700; color: #ef4444;
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        h3 { margin: 15px 0 8px; color: var(--primary); font-size: 18px; font-weight: 800; }
+        p { margin: 0; font-size: 14px; color: #475569; line-height: 1.5; }
+
+        .btn-ver {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; margin-top: 15px; padding: 12px;
+            background: white; border: 1.5px solid var(--primary);
+            border-radius: 14px; color: var(--primary); font-weight: 700;
+            text-decoration: none; font-size: 13px; transition: 0.3s;
+        }
+
+        .btn-ver:active { background: var(--primary); color: white; }
+
+        .empty-state {
+            text-align: center; padding: 50px 20px; color: white;
+        }
+
+        .hidden { display: none; }
+        :root {
+            --primary: #004aad;
+            --text: #1e293b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #f1f5f9;
+        }
+
+        body.dark-mode {
+            --bg: #0f172a;
+            --text: #f1f5f9;
+            --card: #1e293b;
+            --border: #334155;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            transition: background 0.3s, color 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-app">
+        <button class="btn-back" onclick="window.location.href='inicio.html'">
+            <i data-lucide="arrow-left"></i>
+        </button>
+        <h1 style="font-size: 18px; font-weight: 800; margin: 0;">Tareas Pendientes</h1>
+        <div style="width:40px;"></div>
+    </div>
+
+    <div class="student-info">
+        <p id="label-grupo" style="font-size: 14px; font-weight: 600; opacity: 0.9;">Cargando grupo...</p>
+    </div>
+
+    <div class="container" id="lista-tareas">
+        <div class="empty-state" id="loader">
+            <p>Buscando tus tareas...</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, onSnapshot, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-trG4y0yS3ldkZwcOY0Ar-s_aCt1VE-8",
+            authDomain: "escuelasecundariageneralno2.firebaseapp.com",
+            projectId: "escuelasecundariageneralno2",
+            storageBucket: "escuelasecundariageneralno2.firebasestorage.app",
+            messagingSenderId: "755206365423",
+            appId: "1:755206365423:web:81f6a2335a5ce8bfce3b1a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        lucide.createIcons();
+
+        const listaTareas = document.getElementById('lista-tareas');
+        const labelGrupo = document.getElementById('label-grupo');
+
+        // Escuchar el estado de la autenticación para obtener el UID del usuario
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    // 1. Obtener los datos del usuario directamente de Firestore
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        const userGrado = userData.grado;
+                        const userGrupo = userData.grupo;
+
+                        // Actualizar la interfaz con el grupo real de la base de datos
+                        labelGrupo.innerText = `Grupo: ${userGrado}° "${userGrupo}"`;
+
+                        // 2. Consultar tareas filtradas por el Grado y Grupo obtenidos de la BD
+                        cargarTareas(userGrado, userGrupo);
+                    } else {
+                        labelGrupo.innerText = "Error: No se encontraron datos del alumno";
+                    }
+                } catch (error) {
+                    console.error("Error al obtener datos del usuario:", error);
+                }
+            } else {
+                window.location.href = 'index.html'; // Redirigir si no hay sesión
+            }
+        });
+
+        function cargarTareas(grado, grupo) {
+            const q = query(
+                collection(db, "tareas_escolares"),
+                where("grado", "==", grado),
+                where("grupo", "==", grupo.toUpperCase()),
+                orderBy("fecha_creacion", "desc")
+            );
+
+            onSnapshot(q, (snapshot) => {
+                listaTareas.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    listaTareas.innerHTML = `
+                        <div class="empty-state">
+                            <i data-lucide="smile" style="width:48px; height:48px; margin-bottom:10px;"></i>
+                            <p>¡Excelente! No tienes tareas pendientes para este grupo.</p>
+                        </div>`;
+                    lucide.createIcons();
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const tarea = doc.data();
+                    const card = document.createElement('div');
+                    card.className = 'tarea-card';
+                    card.innerHTML = `
+                        <span class="materia-tag">${tarea.materia}</span>
+                        <div class="fecha-entrega">
+                            <i data-lucide="clock" style="width:14px;"></i>
+                            Entrega: ${tarea.fecha_limite}
+                        </div>
+                        <h3>${tarea.titulo}</h3>
+                        <p>${tarea.instrucciones.substring(0, 100)}${tarea.instrucciones.length > 100 ? '...' : ''}</p>
+                        <a href="${tarea.archivo_url || '#'}" target="_blank" class="btn-ver ${tarea.archivo_url ? '' : 'hidden'}">
+                            <i data-lucide="paperclip"></i>
+                            Ver Material Adjunto
+                        </a>
+                    `;
+                    listaTareas.appendChild(card);
+                });
+                lucide.createIcons();
+            }, (error) => {
+                console.error("Error al cargar tareas:", error);
+                listaTareas.innerHTML = '<p style="color:white; text-align:center;">Error al cargar la información.</p>';
+            });
+        }
+
+        function aplicarTemaGuardado() {
+            const temaRecuperado = localStorage.getItem('theme');
+            if (temaRecuperado === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        }
+
+        aplicarTemaGuardado();
+    </script>
+</body>
+</html>

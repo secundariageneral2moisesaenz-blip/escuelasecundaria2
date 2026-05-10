@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Horarios | Moisés Sáenz #2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #0ea5e9;
+            --accent: #10b981;
+            --bg: #0f172a;
+            --glass: rgba(255, 255, 255, 0.95);
+            --text-dark: #1e293b;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: var(--bg);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.15) 0%, transparent 50%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Modo Oscuro */
+        body.dark-mode {
+            --bg: #0f172a;
+            --glass: rgba(30, 41, 59, 0.95);
+            --text-dark: #f1f5f9;
+        }
+
+        .header-app {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; max-width: 500px; margin: 0 auto 20px;
+        }
+
+        .btn-back { background: rgba(255,255,255,0.1); border: none; color: white; padding: 12px; border-radius: 16px; cursor: pointer; transition: 0.3s; }
+        .btn-back:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
+
+        .glass-card {
+            background: var(--glass);
+            border-radius: 32px;
+            padding: 24px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            color: var(--text-dark);
+        }
+
+        .filter-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .select-wrapper { display: flex; flex-direction: column; gap: 6px; }
+        .select-wrapper label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; padding-left: 4px; }
+
+        select {
+            appearance: none;
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            padding: 14px;
+            border-radius: 16px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        select:focus { border-color: var(--primary); outline: none; background: white; }
+
+        .btn-search {
+            width: 100%; padding: 16px; background: var(--primary); color: white;
+            border: none; border-radius: 18px; font-weight: 800; font-size: 15px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+            transition: 0.3s;
+        }
+
+        .result-container { margin-top: 24px; display: none; animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .horario-frame {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 16px;
+            cursor: zoom-in;
+        }
+
+        .horario-img { width: 100%; display: block; }
+
+        .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .btn-action {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px; border-radius: 14px; text-decoration: none;
+            font-weight: 700; font-size: 13px; border: none; cursor: pointer;
+        }
+
+        .download { background: #f1f5f9; color: #475569; }
+        .share { background: #10b981; color: white; }
+
+        .not-found { text-align: center; padding: 40px 20px; color: #64748b; display: none; }
+
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="header-app">
+        <button class="btn-back" onclick="window.location.href='inicio.html'">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <h1 style="font-size: 18px; font-weight: 800; margin: 0;">Horarios Escolares</h1>
+        <div style="width:40px;"></div>
+    </div>
+
+    <div class="glass-card">
+        <div class="filter-section">
+            <div class="select-wrapper">
+                <label>Grado</label>
+                <select id="grado">
+                    <option value="1">1° Grado</option>
+                    <option value="2">2° Grado</option>
+                    <option value="3">3° Grado</option>
+                </select>
+            </div>
+            <div class="select-wrapper">
+                <label>Grupo</label>
+                <select id="grupo">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="H">H</option>
+                    <option value="I">I</option>
+                    <option value="J">J</option>
+                    <option value="K">K</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn-search" onclick="buscarHorario()">
+            <i data-lucide="calendar-search"></i>
+            Ver Horario
+        </button>
+
+        <div id="result-area" class="result-container">
+            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 id="titulo-horario" style="font-size: 15px; margin: 0;"></h3>
+                <span style="font-size: 10px; background: #e0e7ff; color: #4338ca; padding: 4px 8px; border-radius: 6px; font-weight: 800;">OFICIAL</span>
+            </div>
+            
+            <div class="horario-frame" onclick="verImagen()">
+                <img id="horario-preview" class="horario-img" src="" alt="Horario">
+            </div>
+
+            <div class="action-buttons">
+                <a id="btn-download" href="#" target="_blank" class="btn-action download">
+                    <i data-lucide="external-link" size="18"></i>
+                    Ampliar
+                </a>
+                <button onclick="compartirHorario()" class="btn-action share">
+                    <i data-lucide="share-2" size="18"></i>
+                    Compartir
+                </button>
+            </div>
+        </div>
+
+        <div id="not-found" class="not-found">
+            <i data-lucide="alert-circle" style="width: 48px; height: 48px; color: #cbd5e1; margin-bottom: 12px;"></i>
+            <p style="margin: 0; font-weight: 700;">No disponible</p>
+            <p style="font-size: 12px; margin-top: 4px;">El horario de este grupo aún no ha sido cargado.</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-trG4y0yS3ldkZwcOY0Ar-s_aCt1VE-8",
+            authDomain: "escuelasecundariageneralno2.firebaseapp.com",
+            projectId: "escuelasecundariageneralno2",
+            storageBucket: "escuelasecundariageneralno2.firebasestorage.app",
+            messagingSenderId: "755206365423",
+            appId: "1:755206365423:web:81f6a2335a5ce8bfce3b1a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        lucide.createIcons();
+
+        let currentUrl = "";
+
+        // 1. Validar sesión y cargar grupo oficial de la BD
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        document.getElementById('grado').value = userData.grado;
+                        document.getElementById('grupo').value = userData.grupo.toUpperCase();
+                        
+                        // Buscar horario automáticamente al entrar
+                        buscarHorario();
+                    }
+                } catch (e) { console.error(e); }
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        window.buscarHorario = async () => {
+            const grado = document.getElementById('grado').value;
+            const grupo = document.getElementById('grupo').value;
+            const docId = `horario_${grado}${grupo}`;
+
+            const btn = document.querySelector('.btn-search');
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Buscando...`;
+            lucide.createIcons();
+
+            try {
+                const docSnap = await getDoc(doc(db, "horarios_escolares", docId));
+                const resultArea = document.getElementById('result-area');
+                const notFound = document.getElementById('not-found');
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    currentUrl = data.url;
+                    notFound.style.display = 'none';
+                    resultArea.style.display = 'block';
+                    
+                    document.getElementById('titulo-horario').innerText = `Horario ${grado}° "${grupo}"`;
+                    document.getElementById('horario-preview').src = data.url;
+                    document.getElementById('btn-download').href = data.url;
+                } else {
+                    resultArea.style.display = 'none';
+                    notFound.style.display = 'block';
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Problema de conexión.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i data-lucide="calendar-search"></i> Ver Horario`;
+                lucide.createIcons();
+            }
+        };
+
+        window.verImagen = () => {
+            if(!currentUrl) return;
+            Swal.fire({
+                imageUrl: currentUrl,
+                showConfirmButton: false,
+                width: '100%',
+                background: 'transparent'
+            });
+        };
+
+        window.compartirHorario = () => {
+            if (navigator.share) {
+                navigator.share({ title: 'Horario Escolar', url: currentUrl });
+            } else {
+                navigator.clipboard.writeText(currentUrl);
+                Swal.fire('Copiado', 'Enlace copiado', 'success');
+            }
+        };
+
+        function aplicarTemaGuardado() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        }
+        aplicarTemaGuardado();
+    </script>
+</body>
+</html>
