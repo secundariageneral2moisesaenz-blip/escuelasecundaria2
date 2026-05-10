@@ -71,6 +71,20 @@
             margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
+        .img-tutorial {
+    width: 100%;
+    max-width: 280px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+.swal2-html-container p {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #475569;
+}
     </style>
 </head>
 <body>
@@ -200,57 +214,96 @@
             }
         });
 
-        // --- FUNCIÓN DEL TUTORIAL CON TUS IMÁGENES ---
         async function mostrarTutorial(rol, nombre) {
-            const primerNombre = nombre.split(' ')[0];
-            const swalConfig = {
-                confirmButtonColor: '#004aad',
-                confirmButtonText: 'Siguiente',
-                padding: '2em',
-                color: '#1e293b',
-                backdrop: `rgba(0, 74, 173, 0.4)`,
-                allowOutsideClick: false
-            };
+    const primerNombre = nombre.split(' ')[0];
+    const swalConfig = {
+        confirmButtonColor: '#004aad',
+        confirmButtonText: 'Siguiente',
+        padding: '2em',
+        color: '#1e293b',
+        backdrop: `rgba(0, 74, 173, 0.6)`,
+        allowOutsideClick: false,
+        showClass: { popup: 'animate__animated animate__fadeInUp' }
+    };
 
-            // PASO 1: BIENVENIDA
-            await Swal.fire({
-                ...swalConfig,
-                title: `¡Hola, ${primerNombre}! 👋`,
-                html: `
-                    <img src="TU_IMAGEN_BIENVENIDA.jpg" class="img-tutorial">
-                    <p>Bienvenido al <b>Portal Digital</b> de tu escuela. Estamos aquí para ayudarte en tu camino escolar.</p>
-                `
-            });
+    // Paso 1: Bienvenida General
+    await Swal.fire({
+        ...swalConfig,
+        title: `¡Hola, ${primerNombre}! 👋`,
+        html: `
+            <img src="bienvenidos.png" class="img-tutorial">
+            <p>Bienvenido al <b>Portal Digital</b> de la Moisés Sáenz #2. Vamos a darte un recorrido rápido para que aproveches tu cuenta.</p>
+        `
+    });
 
-            // PASO 2: HERRAMIENTAS
-            await Swal.fire({
-                ...swalConfig,
-                title: 'Tus Herramientas',
-                html: `
-                    <img src="TU_IMAGEN_HERRAMIENTAS.jpg" class="img-tutorial">
-                    <p>Aquí podrás revisar tus tareas, consultar avisos importantes y estar al tanto de tus evaluaciones.</p>
-                `
-            });
-
-            // PASO 3: PERFIL Y AJUSTES
-            await Swal.fire({
-                ...swalConfig,
-                title: 'Personalización',
-                html: `
-                    <img src="TU_IMAGEN_AJUSTES.jpg" class="img-tutorial">
-                    <p>Recuerda que en la barra inferior puedes acceder a tu perfil y cambiar al <b>Modo Oscuro</b> para cuidar tu vista.</p>
-                `
-            });
-
-            // PASO 4: FINALIZAR
-            await Swal.fire({
-                ...swalConfig,
-                title: '¡Todo listo! 🚀',
-                text: 'Ya puedes empezar a explorar tu portal escolar.',
-                icon: 'success',
-                confirmButtonText: '¡Entrar al Portal!'
-            });
+    // Pasos específicos por Rol
+    if (rol === 'admin') {
+        const pasosAdmin = [
+            { t: 'Navegar por el inicio', d: 'Explora la barra de navegación y usa las diferentes secciones que tienes.', img: 'inicio.jpeg' },
+            { t: 'Publicar Avisos', d: 'Usa el ícono de megáfono para enviar avisos masivos a toda la comunidad escolar.', img: 'aviso.jpeg' },
+            { t: 'Gestión de Archivos', d: 'Sube documentos, boletas y reglamentos en la nube para que estén siempre disponibles.', img: 'archivo.jpeg' },
+            { t: 'Control de Alumnos', d: 'Desde el menu busca la sección boletas y publica boletas de los estudiantes.', img: 'boletas.jpeg' },
+            { t: 'Bitacora', d: 'Gestiona y genera reportes,avisos esolares citatorios de padres y mas.', img: 'bitacora.jpeg' }
+        ];
+        for (let paso of pasosAdmin) {
+            await Swal.fire({ ...swalConfig, title: paso.t, html: `<img src="img/tutorial/${paso.img}" class="img-tutorial"><p>${paso.d}</p>` });
         }
+    } 
+    
+    else if (rol === 'maestro') {
+        const pasosMaestro = [
+            { t: 'Navegar por el inicio', d: 'Explora la barra de navegación y usa las diferentes secciones que tienes.', img: 'inicio.jpeg' },
+            { t: 'Subir Tareas', d: 'Publica tareas para que tus alumnos los vean al instante.', img: 'subir.jpg' },
+            { t: 'Agendar Exámenes', d: 'Usa el calendario para fijar fechas de evaluaciones y evitar que se encimen con otras.', img: 'fechas.jpg' },
+        ];
+        for (let paso of pasosMaestro) {
+            await Swal.fire({ ...swalConfig, title: paso.t, html: `<img src="img/tutorial/${paso.img}" class="img-tutorial"><p>${paso.d}</p>` });
+        }
+    } 
+    
+    else if (rol === 'alumno') {
+        const pasosAlumno = [
+            { t: 'Navegar por el inicio', d: 'Explora la barra de navegación y usa las diferentes secciones que tienes.', img: 'inicio.jpeg' },
+            { t: 'Tus Tareas', d: 'Revisa diariamente la sección de "Mis Tareas" para no perder ninguna entrega.', img: 'tareas.jpg' },
+            { t: 'Exámenes y Proyectos', d: 'Consulta el calendario de evaluaciones para organizar mejor tus estudios.', img: 'examenes.jpg' },
+            { t: 'Chat de Grupo', d: 'Platica con los de tu grupo graba audios manda imagenes y mas.', img: 'chat.jpg' },
+            { t: 'Horario Escolar', d: 'Ten siempre a la mano tu horario de clases y materias del día.', img: 'horario.jpg' }
+        ];
+        for (let paso of pasosAlumno) {
+            await Swal.fire({ ...swalConfig, title: paso.t, html: `<img src="img/tutorial/${paso.img}" class="img-tutorial"><p>${paso.d}</p>` });
+        }
+    } 
+    
+    else if (rol === 'padre') {
+        const pasosPadre = [
+            { t: 'Navegar por el inicio', d: 'Explora la barra de navegación y usa las diferentes secciones que tienes.', img: 'inicio.jpeg' },
+            { t: 'Consultar Boletas', d: 'Visualiza las calificaciones actualizadas de su hijo desde la comodidad de su celular.', img: 'expedientes.jpg' },
+            { t: 'Reportes de Conducta', d: ' busque reportes sobre el comportamiento y asistencia del alumno.', img: 'reportes.jpg' },
+        ];
+        for (let paso of pasosPadre) {
+            await Swal.fire({ ...swalConfig, title: paso.t, html: `<img src="img/tutorial/${paso.img}" class="img-tutorial"><p>${paso.d}</p>` });
+        }
+    }
+
+    // Paso Final: Personalización (Modo Oscuro)
+    await Swal.fire({
+        ...swalConfig,
+        title: 'Personalización 🎨',
+        html: `
+            <img src="ajustes.jpg" class="img-tutorial">
+            <p>Por último, recuerda que en <b>Ajustes</b> puedes  <b> cambiar tu contrseña, activar modo oscuro y mas</b> y revisar nuestro <b>Aviso de Privacidad</b>.</p>
+        `
+    });
+
+    // Paso de Cierre
+    await Swal.fire({
+        ...swalConfig,
+        title: '¡Todo listo! 🚀',
+        text: 'Ya puedes empezar a explorar tu portal escolar.',
+        icon: 'success',
+        confirmButtonText: '¡Entrar al Portal!'
+    });
+}
 
         document.getElementById('authForm').addEventListener('submit', async (e) => {
             e.preventDefault();
