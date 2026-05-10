@@ -215,20 +215,73 @@
                     <p>Reporta fallos o solicita asistencia</p>
                 </div>
             </div>
-            <div class="setting-item" onclick="mostrarLegales('Términos y Condiciones', 'Al usar esta plataforma, aceptas el uso académico de tus datos. La escuela no se hace responsable por el mal uso de las credenciales compartidas...')">
-                <div class="icon-box purple"><i data-lucide="file-text" size="20"></i></div>
-                <div class="setting-info">
-                    <h4>Términos y Condiciones</h4>
-                    <p>Reglamento de uso del portal</p>
-                </div>
+            <div class="setting-item" onclick="mostrarTerminos()">
+    <div class="icon-box purple"><i data-lucide="file-text" size="20"></i></div>
+    <div class="setting-info">
+        <h4>Términos y Condiciones</h4>
+        <p>Reglamento de uso del portal</p>
+    </div>
+</div>
+
+<script>
+function mostrarTerminos() {
+    Swal.fire({
+        title: 'Términos y Condiciones',
+        html: `
+            <div style="text-align: left; font-size: 13px; max-height: 350px; overflow-y: auto; padding: 10px; line-height: 1.5; color: #475569;">
+                <p><strong>1. Aceptación:</strong> Al acceder a este portal, el usuario y sus tutores legales aceptan los presentes términos de uso diseñados para fines estrictamente académicos.</p>
+                
+                <p><strong>2. Responsabilidad de Cuenta:</strong> El usuario es el único responsable de mantener la confidencialidad de sus credenciales de acceso. La escuela no se hace responsable por el mal uso de cuentas compartidas con terceros.</p>
+                
+                <p><strong>3. Uso Permitido:</strong> Queda prohibido cualquier intento de manipulación de datos, extracción de información de otros usuarios o uso de lenguaje inapropiado en las áreas de comunicación (chats o reportes).</p>
+                
+                <p><strong>4. Disponibilidad:</strong> La institución se reserva el derecho de suspender el acceso por mantenimiento o por mal comportamiento digital del alumno, previo aviso a sus tutores.</p>
+                
+                <p><strong>5. Veracidad:</strong> La información académica mostrada es de carácter informativo. Para documentos oficiales con validez legal, deberá acudir a las oficinas de control escolar del plantel.</p>
+                
+                <p style="font-size: 11px; color: #94a3b8; margin-top: 15px;">Moisés Sáenz #2 - Plataforma Digital Escolar</p>
             </div>
-            <div class="setting-item" onclick="mostrarLegales('Aviso de Privacidad', 'Tus datos están protegidos bajo la Ley General de Protección de Datos Personales. Solo personal autorizado tiene acceso a tu información académica...')">
-                <div class="icon-box purple"><i data-lucide="eye-off" size="20"></i></div>
-                <div class="setting-info">
-                    <h4>Aviso de Privacidad</h4>
-                    <p>Cómo cuidamos tu información</p>
-                </div>
+        `,
+        confirmButtonText: 'Acepto los términos',
+        confirmButtonColor: '#004aad'
+    });
+}
+</script>
+            <div class="setting-item" onclick="mostrarAvisoPrivacidad()">
+    <div class="icon-box purple"><i data-lucide="eye-off" size="20"></i></div>
+    <div class="setting-info">
+        <h4>Aviso de Privacidad</h4>
+        <p>Consulta cómo protegemos tus datos personales</p>
+    </div>
+</div>
+
+<script>
+function mostrarAvisoPrivacidad() {
+    Swal.fire({
+        title: 'Aviso de Privacidad',
+        html: `
+            <div style="text-align: left; font-size: 13px; max-height: 350px; overflow-y: auto; padding: 10px; line-height: 1.5; color: #475569;">
+                <p><strong>1. Responsable:</strong> La Escuela Secundaria General No. 2 "Moisés Sáenz" es responsable del tratamiento y protección de sus datos personales conforme a la Ley General de Protección de Datos Personales.</p>
+                
+                <p><strong>2. Datos Recabados:</strong> Recopilamos datos de identificación (nombre, CURP), datos de contacto (correo, teléfono) y datos académicos (calificaciones, asistencia y conducta).</p>
+                
+                <p><strong>3. Finalidad:</strong> Sus datos se utilizarán exclusivamente para:
+                <br>• Gestión de expedientes académicos digitales.
+                <br>• Consulta de boletas y reportes para tutores.
+                <br>• Comunicación de avisos urgentes y trámites de becas (Rita Cetina).</p>
+                
+                <p><strong>4. Seguridad:</strong> La información está encriptada y almacenada en servidores seguros. El acceso está restringido estrictamente por roles de usuario (Administrador, Docente, Alumno, Padre).</p>
+                
+                <p><strong>5. Derechos ARCO:</strong> Usted puede solicitar el acceso, rectificación o cancelación de sus datos directamente en la administración del plantel.</p>
+                
+                <p style="font-size: 11px; color: #94a3b8; margin-top: 15px;">Última actualización: Mayo del 2026</p>
             </div>
+        `,
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#004aad'
+    });
+}
+</script>
             <div class="setting-item" onclick="cerrarSesion()">
                 <div class="icon-box red"><i data-lucide="log-out" size="20"></i></div>
                 <div class="setting-info">
